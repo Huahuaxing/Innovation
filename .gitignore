@@ -1,0 +1,27 @@
+# 忽略所有输出数据
+03_InputData
+04_COMSOL_Output/
+05_ProcessedData/
+06_Results/
+
+# 忽略大文件/中间文档
+*.csv
+*.xlsx
+*.pkl
+*.vtu
+*.log
+
+# 忽略 IDE 工作目录
+.vscode/
+.idea/
+
+# 忽略临时文件、缓存
+__pycache__/
+*.pyc
+*.class
+
+# 忽略报告草稿或本地文档
+07_Docs/
+*.docx
+*.pdf
+*.md
