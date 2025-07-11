@@ -1,17 +1,16 @@
 import numpy as np
 
-# ------------------------- 材料参数 -------------------------
-K = 4.829e9         # 体积模量
-MU = 3.180e9        # 剪切模量
-E = 40e9            # 杨氏模量（Pa）
-nu = 0.25           # 泊松比
-rho = 2600          # 密度（kg/m³）
+# ------------------------- 应力数组 -------------------------
+P = np.linspace(3, 600, 200) * 1e5 # Pa
 
-# -------------------- 二阶弹性模量计算 --------------------
-def compute_lambda_mu(E, nu):
-    lam = E * nu / ((1 + nu) * (1 - 2 * nu))
-    mu = E / (2 * (1 + nu))
-    return lam, mu
+# ------------------------- 材料参数 -------------------------
+# 曹老师comsol模型设置的
+v_stress = 2118.9 # m/s
+v_shear = 1254.7 # m/s
+rho = 2020 # kg/m^3
+
+lam = rho * (v_stress**2 - 2 * v_shear**2)  # 拉梅常数
+mu = rho * v_shear**2  # 剪切模量
 
 # -------------------- 附录A 第二组公式（单轴预应力） --------------------
 def A11(P, A, B, C, lam, mu):
@@ -34,7 +33,7 @@ def A55(P, A, B, C, lam, mu):
     term2 = (mu + B + A/2) * P * (lam + 2*mu) / (mu * (3*lam + 2*mu))
     term3 = (mu + B + A/2) * P * lam / (2 * mu * (3*lam + 2*mu))
     return term1 + term2 - term3
-
+ 
 def A44(P, A, B, C, lam, mu):
     return A55(P, A, B, C, lam, mu)  # 等价于 A55（若为各向同性）
 
@@ -83,18 +82,18 @@ def K_expr(P, A, B, C, lam, mu, theta1_deg=90):
     return K
 
 # -------------------- 波速计算 2.对称面内如sita2=0--------------------
-def vp_confined(P, A, B, C, lam, mu, rho, theta1_deg=90):
+def vp_confined2(P, A, B, C, lam, mu, rho, theta1_deg=90):
     a11 = A11(P, A, B, C, lam, mu)
     a55 = A55(P, A, B, C, lam, mu)
     K = K_expr(P, A, B, C, lam, mu, theta1_deg)
     return np.sqrt((a11 + a55 + np.sqrt(K)) / rho)
 
-def vsv_confined(P, A, B, C, lam, mu, rho, theta1_deg=90):
+def vsv_confined2(P, A, B, C, lam, mu, rho, theta1_deg=90):
     a11 = A11(P, A, B, C, lam, mu)
     a55 = A55(P, A, B, C, lam, mu)
     K = K_expr(P, A, B, C, lam, mu, theta1_deg)
     return np.sqrt((a11 + a55 - np.sqrt(K)) / rho)
 
-def vsh_confined(P, A, B, C, lam, mu, rho, theta1_deg=90):
+def vsh_confined2(P, A, B, C, lam, mu, rho, theta1_deg=90):
     a44 = A44(P, A, B, C, lam, mu)
     return np.sqrt(a44 / rho)
