@@ -1,4 +1,5 @@
 import numpy as np
+from utils.shelby_tensor_cch import shelby_tensor_cch
 
 def modulus_dry_stress(c_1, sita, C, density, a1, a2, a3, p, B, c_density):
     """
@@ -21,8 +22,9 @@ def modulus_dry_stress(c_1, sita, C, density, a1, a2, a3, p, B, c_density):
     V_dry = np.zeros((3, sita.size))
     
     # 计算Z_N和Z_T
-    Z_N = 8 * B[4] * c_density / (3 * c_1 * (1 - (C[0, 2] / c_1)**2))
-    intermediate = B[3] + B[4] - 2 * C[3, 3] * B[4] / (c_1 + C[0, 2] + 2 * C[3, 3])
+    # Z_N, Z_T = shelby_tensor_cch(C, a1, a2, a3, p)
+    Z_N = 8 * B[3] * c_density / (3 * c_1 * (1 - (C[0, 2] / c_1)**2))
+    intermediate = B[2] + B[3] - 2 * C[3, 3] * B[3] / (c_1 + C[0, 2] + 2 * C[3, 3])
     Z_T = 16 * c_density / (3 * C[3, 3] * intermediate)
     
     # 计算delta_N和delta_T

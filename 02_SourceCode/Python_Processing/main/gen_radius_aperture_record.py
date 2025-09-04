@@ -78,7 +78,7 @@ for xd in range(1, 6):  # 五个模型
 
     aperture_random[xd-1, :, :] = aperture_a                                    # （5, 1, 200），每个模型，每个应力条件下的平均开度
     radius_random[xd-1, :, :] = radius                                          # （5, 20, 200），每个模型，每个裂隙，每个应力条件下的长轴长度
-    radius_record[xd-1, :, :, 0] = radius                                       # （5, 20, 200, 6），存储的是裂隙的长轴长度
+    radius_record[xd-1, :, :, 0] = radius                                       # （5, 20, 200, 6），存储的是裂隙的长轴半径
     aperture_record[xd-1, :, :, 0] = (np.pi * 0.036 / 2) * aperture_aver        # （5, 20, 200, 6），存储的是裂隙的等效面积
 
 # avera = np.zeros((5, 200))

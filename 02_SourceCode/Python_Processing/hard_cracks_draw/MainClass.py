@@ -127,7 +127,7 @@ class MainClass:
                             self.c_density = n * (self.a2**3) / S_mian
                             self.p = 4 * np.pi * self.c_density * self.c_as / 3.0  # 这个是椭圆条件下的（3D）crack porosity
 
-                        Z, V_dry_oblique = modulus_dry_inclined(self.c_density, MainClass.B, MainClass.c_1, MainClass.C, MainClass.angle, MainClass.density, MainClass.sita, MainClass.V_dry_oblique)
+                        Z, V_dry_oblique = modulus_dry_inclined(self.c_density, MainClass.B, MainClass.c_1, MainClass.C, MainClass.angle, MainClass.density, MainClass.sita)
                         Z_intermediate = Z + Z_intermediate         # Z.shape = (6, 6), Z_intermediate.shape = (6, 6)
 
                     S = np.linalg.inv(MainClass.C) + Z_intermediate

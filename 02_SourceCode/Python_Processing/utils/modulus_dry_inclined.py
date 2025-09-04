@@ -1,6 +1,6 @@
 import numpy as np
 
-def modulus_dry_inclined(c_density, B, c_1, C, angle, density, sita, V_dry_oblique):
+def modulus_dry_inclined(c_density, B, c_1, C, angle, density, sita):
     # V_dry_oblique = np.zeros((3, sita.size))
     # [Z_N, Z_T] = shelby_tensor_cch(C, a1, a2, a3, p)
 

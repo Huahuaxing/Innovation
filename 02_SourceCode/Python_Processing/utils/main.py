@@ -118,7 +118,7 @@ if __name__ == '__main__':
                     B[0] = 0.5 * (B[3] + B[4])
                     B[1] = 0.5 * (B[3] - B[4])
 
-                    Z, V_dry_oblique = modulus_dry_inclined(c_density, B, c_1, C, angle, density, sita, V_dry_oblique)
+                    Z, V_dry_oblique = modulus_dry_inclined(c_density, B, c_1, C, angle, density, sita)
                     Z_intermediate = Z + Z_intermediate         # Z.shape = (6, 6), Z_intermediate.shape = (6, 6)
 
                 S = np.linalg.inv(C) + Z_intermediate

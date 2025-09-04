@@ -9,7 +9,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import sys
-from utils.MainClass import MainClass
+from MainClass import MainClass
 
 plt.rcParams['font.sans-serif'] = ['SimHei']  # 使用黑体
 plt.rcParams['axes.unicode_minus'] = False    # 正确显示负号
@@ -17,8 +17,8 @@ plt.rcParams['axes.unicode_minus'] = False    # 正确显示负号
 
 # 加载数据
 # model1Path = '.\\Data\\ellipse_data_radius_aperture_record.json'
-model2Path = '.\\Data\\ellipse_data_aligned_radius_aperture_record.json'
-model3Path  = '.\\Data\\polygonal_data_radius_aperture_record.json'
+model2Path = '.\\05_ProcessedData\\record\\ellipse_data_aligned_radius_aperture_record.json'
+model3Path = '.\\05_ProcessedData\\record\\polygonal_data_radius_aperture_record.json'
 
 # model1 = MainClass(dataPath=model1Path)
 model2 = MainClass(dataPath=model2Path)
@@ -190,106 +190,145 @@ titles = ['20AR1', '16AR1+4AR2', '12AR1+8AR2', '8AR1+12AR2', '4AR1+16AR2', '20AR
 
 
 # 以下三张图，应曹老师要求，去除蓝色虚线，子图名“20AR1”等放入图片内部，新子图名改为(a)，(b)，(c)的形式
-fig8, axes8 = plt.subplots(2, 3, sharex=True, sharey=True, figsize=(12, 8))
-fig8.suptitle('Stress-Vp', fontsize=16)
+# fig8, axes8 = plt.subplots(2, 3, sharex=True, sharey=True, figsize=(12, 8))
+# fig8.suptitle('Stress-Vp', fontsize=16)
 
-model2V = model2.average_velocity()
-model3V = model3.average_velocity()
+# model2V = model2.average_velocity()
+# model3V = model3.average_velocity()
 
-for i in range(axes8.shape[0]):
-    for j in range(axes8.shape[1]):
+# for i in range(axes8.shape[0]):
+#     for j in range(axes8.shape[1]):
+#         index = i * 3 + j
+#         new_index = indices[index]
+
+#         # 绘制曲线
+#         axes8[i, j].plot(sx, model2V[0, :, indices[index]], 'r-', label='椭圆形对齐裂缝')
+#         axes8[i, j].plot(sx, model3V[0, :, indices[index]], 'g-', label='多边形裂缝')
+        
+#         # 设置 x 轴刻度
+#         axes8[i, j].set_xticks(sx[tick_indices])
+        
+#         # 设置编号
+#         axes8[i, j].set_title(f'({chr(97 + index)})')  # 使用字母编号
+
+#         # 在子图内部添加原标题，调整 y 坐标并使用 bbox
+#         axes8[i, j].text(0.05, 0.95, titles[index], ha='left', va='top', 
+#                          transform=axes8[i, j].transAxes,
+#                          bbox=dict(facecolor='white', alpha=0.5, edgecolor='black'))  # 添加背景
+        
+#         axes8[i, j].set_xlabel('应力 (MPa)')
+#         axes8[i, j].set_ylabel('平均P波速度 (m/s)')
+#         axes8[i, j].legend()
+#         axes8[i, j].grid(True)
+
+# fig8.tight_layout()  # 调整布局
+
+
+# # 平均应力-Aperture曲线
+# fig9, axes9 = plt.subplots(2, 3, sharex=True, sharey=True, figsize=(12, 8))
+# fig9.suptitle('Stress-Aperture', fontsize=16)
+
+# model2ApertureRecord_Aver = np.mean(model2ApertureRecord, axis=(0, 1))
+# model3ApertureRecord_Aver = np.mean(model3ApertureRecord, axis=(0, 1))
+
+# for i in range(axes9.shape[0]):
+#     for j in range(axes9.shape[1]):
+#         index = i * 3 + j
+#         new_index = indices[index]
+
+#         # 绘制曲线
+#         axes9[i, j].plot(sx, model2ApertureRecord_Aver[:, indices[index]], 'r-', label='椭圆形对齐裂缝')
+#         axes9[i, j].plot(sx, model3ApertureRecord_Aver[:, indices[index]], 'g-', label='多边形裂缝')
+        
+#         # 设置 x 轴刻度
+#         axes9[i, j].set_xticks(sx[tick_indices])
+        
+#         # 设置编号
+#         axes9[i, j].set_title(f'({chr(97 + index)})')  # 使用字母编号
+        
+#         # 在子图内部添加原标题
+#         axes9[i, j].text(0.95, 0.75, titles[index], ha='right', va='top', transform=axes9[i, j].transAxes,
+#                          bbox=dict(facecolor='white', alpha=0.5, edgecolor='black'))
+
+#         axes9[i, j].set_xlabel('应力 (MPa)')
+#         axes9[i, j].set_ylabel('平均Aperture')
+#         axes9[i, j].legend()
+#         axes9[i, j].grid(True)
+
+# fig9.tight_layout()  # 调整布局
+
+
+# # 图10：每组平均应力-radius曲线
+# fig10, axes10 = plt.subplots(2, 3, sharex=True, sharey=True, figsize=(12, 8))
+# fig10.suptitle('Stress-Radius', fontsize=16)
+
+# model2RadiusRecord_Aver = np.mean(model2RadiusRecord, axis=(0, 1))
+# model3RadiusRecord_Aver = np.mean(model3RadiusRecord, axis=(0, 1))
+
+# for i in range(axes10.shape[0]):
+#     for j in range(axes10.shape[1]):
+#         index = i * 3 + j
+#         new_index = indices[index]
+
+#         # 绘制曲线
+#         axes10[i, j].plot(sx, model2RadiusRecord_Aver[:, indices[index]], 'r-', label='椭圆形对齐裂缝')
+#         axes10[i, j].plot(sx, model3RadiusRecord_Aver[:, indices[index]], 'g-', label='多边形裂缝')
+        
+#         # 设置 x 轴刻度
+#         axes10[i, j].set_xticks(sx[tick_indices])
+        
+#         # 设置编号
+#         axes10[i, j].set_title(f'({chr(97 + index)})')  # 使用字母编号
+        
+#         # 在子图内部添加原标题
+#         axes10[i, j].text(0.95, 0.75, titles[index], ha='right', va='top', transform=axes10[i, j].transAxes,
+#                          bbox=dict(facecolor='white', alpha=0.5, edgecolor='black'))
+
+#         axes10[i, j].set_xlabel('应力 (MPa)')
+#         axes10[i, j].set_ylabel('平均Raius')
+#         axes10[i, j].legend()
+#         axes10[i, j].grid(True)
+
+# fig10.tight_layout()  # 调整布局
+
+
+# 图11：每组平均应力-SH波速度图
+fig11, axes11 = plt.subplots(2, 3, sharex=True, sharey=True, figsize=(12, 8))
+fig11.suptitle('Stress-Vsh', fontsize=16)
+
+model2Vsh = model2.average_velocity(16)[2, :, :]
+model3Vsh = model3.average_velocity(16)[2, :, :]
+
+for i in range(axes11.shape[0]):
+    for j in range(axes11.shape[1]):
         index = i * 3 + j
         new_index = indices[index]
 
         # 绘制曲线
-        axes8[i, j].plot(sx, model2V[0, :, indices[index]], 'r-', label='椭圆形对齐裂缝')
-        axes8[i, j].plot(sx, model3V[0, :, indices[index]], 'g-', label='多边形裂缝')
+        axes11[i, j].plot(sx, model2Vsh[:, indices[index]], 'r-', label='椭圆形对齐裂缝')
+        axes11[i, j].plot(sx, model3Vsh[:, indices[index]], 'g-', label='多边形裂缝')
         
         # 设置 x 轴刻度
-        axes8[i, j].set_xticks(sx[tick_indices])
+        axes11[i, j].set_xticks(sx[tick_indices])
+        axes11[i, j].ticklabel_format(style='plain', axis='y')
         
         # 设置编号
-        axes8[i, j].set_title(f'({chr(97 + index)})')  # 使用字母编号
+        axes11[i, j].set_title(f'({chr(97 + index)})')  # 使用字母编号
 
         # 在子图内部添加原标题，调整 y 坐标并使用 bbox
-        axes8[i, j].text(0.05, 0.95, titles[index], ha='left', va='top', 
-                         transform=axes8[i, j].transAxes,
+        axes11[i, j].text(0.05, 0.95, titles[index], ha='left', va='top', 
+                         transform=axes11[i, j].transAxes,
                          bbox=dict(facecolor='white', alpha=0.5, edgecolor='black'))  # 添加背景
         
-        axes8[i, j].set_xlabel('应力 (MPa)')
-        axes8[i, j].set_ylabel('平均P波速度 (m/s)')
-        axes8[i, j].legend()
-        axes8[i, j].grid(True)
+        axes11[i, j].set_xlabel('应力 (MPa)')
+        axes11[i, j].set_ylabel('平均SH波速度 (m/s)')
+        axes11[i, j].legend()
+        axes11[i, j].grid(True)
 
-fig8.tight_layout()  # 调整布局
+fig11.tight_layout()  # 调整布局
 
-
-# 平均应力-Aperture曲线
-fig9, axes9 = plt.subplots(2, 3, sharex=True, sharey=True, figsize=(12, 8))
-fig9.suptitle('Stress-Aperture', fontsize=16)
-
-model2ApertureRecord_Aver = np.mean(model2ApertureRecord, axis=(0, 1))
-model3ApertureRecord_Aver = np.mean(model3ApertureRecord, axis=(0, 1))
-
-for i in range(axes9.shape[0]):
-    for j in range(axes9.shape[1]):
-        index = i * 3 + j
-        new_index = indices[index]
-
-        # 绘制曲线
-        axes9[i, j].plot(sx, model2ApertureRecord_Aver[:, indices[index]], 'r-', label='椭圆形对齐裂缝')
-        axes9[i, j].plot(sx, model3ApertureRecord_Aver[:, indices[index]], 'g-', label='多边形裂缝')
-        
-        # 设置 x 轴刻度
-        axes9[i, j].set_xticks(sx[tick_indices])
-        
-        # 设置编号
-        axes9[i, j].set_title(f'({chr(97 + index)})')  # 使用字母编号
-        
-        # 在子图内部添加原标题
-        axes9[i, j].text(0.95, 0.75, titles[index], ha='right', va='top', transform=axes9[i, j].transAxes,
-                         bbox=dict(facecolor='white', alpha=0.5, edgecolor='black'))
-
-        axes9[i, j].set_xlabel('应力 (MPa)')
-        axes9[i, j].set_ylabel('平均Aperture')
-        axes9[i, j].legend()
-        axes9[i, j].grid(True)
-
-fig9.tight_layout()  # 调整布局
-
-
-# 图7：每组平均应力-radius曲线
-fig10, axes10 = plt.subplots(2, 3, sharex=True, sharey=True, figsize=(12, 8))
-fig10.suptitle('Stress-Radius', fontsize=16)
-
-model2RadiusRecord_Aver = np.mean(model2RadiusRecord, axis=(0, 1))
-model3RadiusRecord_Aver = np.mean(model3RadiusRecord, axis=(0, 1))
-
-for i in range(axes10.shape[0]):
-    for j in range(axes10.shape[1]):
-        index = i * 3 + j
-        new_index = indices[index]
-
-        # 绘制曲线
-        axes10[i, j].plot(sx, model2RadiusRecord_Aver[:, indices[index]], 'r-', label='椭圆形对齐裂缝')
-        axes10[i, j].plot(sx, model3RadiusRecord_Aver[:, indices[index]], 'g-', label='多边形裂缝')
-        
-        # 设置 x 轴刻度
-        axes10[i, j].set_xticks(sx[tick_indices])
-        
-        # 设置编号
-        axes10[i, j].set_title(f'({chr(97 + index)})')  # 使用字母编号
-        
-        # 在子图内部添加原标题
-        axes10[i, j].text(0.95, 0.75, titles[index], ha='right', va='top', transform=axes10[i, j].transAxes,
-                         bbox=dict(facecolor='white', alpha=0.5, edgecolor='black'))
-
-        axes10[i, j].set_xlabel('应力 (MPa)')
-        axes10[i, j].set_ylabel('平均Raius')
-        axes10[i, j].legend()
-        axes10[i, j].grid(True)
-
-fig10.tight_layout()  # 调整布局
+np.savetxt('.\\05_ProcessedData\\velocity\\90_degree\\vsh_ellipse.csv', model2Vsh, delimiter=',')
+np.savetxt('.\\05_ProcessedData\\velocity\\90_degree\\vsh_polygonal.csv', model3Vsh, delimiter=',')
 
 
 plt.show()
