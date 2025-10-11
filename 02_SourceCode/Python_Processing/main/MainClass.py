@@ -15,7 +15,7 @@ from utils.modulus_dry_inclined import modulus_dry_inclined
 from utils.modulus_dry_stress import modulus_dry_stress
 
 class MainClass:
-    sita = np.linspace(0, np.pi, 31) # 波速角度数组，从0到π，31个点 (弧度)
+    sita = np.linspace(0, np.pi, 31) # 波速角度数组，生成从0到π等间隔的31个点 (弧度)，数组索引序号0代表0度，
     angle = 0                        # 裂隙倾斜角度 (弧度)
     # TI背景介质下
     
@@ -27,11 +27,11 @@ class MainClass:
     K = 4.829e9                     # 体积模量 (Pa)
     MU = 3.180e9                    # 剪切模量 (Pa)
 
-    density = 2020               # 密度 (kg/m³)
-    V_dry = np.zeros((3, sita.size))  # 干燥条件下的波速数组 (m/s), [0]P波,[1]SV波,[2]SH波
-    V_saturated = np.zeros((3, sita.size))  # 饱和条件下的波速数组 (m/s)
+    density = 2020                                  # 密度 (kg/m³)
+    V_dry = np.zeros((3, sita.size))                # 干燥条件下的波速数组 (m/s), [0]P波,[1]SV波,[2]SH波
+    V_saturated = np.zeros((3, sita.size))          # 饱和条件下的波速数组 (m/s)
     
-    V_dry_oblique = np.zeros((3, sita.size))  # 倾斜裂隙条件下干燥介质的波速数组 (m/s)
+    V_dry_oblique = np.zeros((3, sita.size))        # 倾斜裂隙条件下干燥介质的波速数组 (m/s)
     V_saturated_oblique = np.zeros((3, sita.size))  # 倾斜裂隙条件下饱和介质的波速数组 (m/s)
 
     if backProperty == 1:
@@ -71,19 +71,19 @@ class MainClass:
 
     c_1 = np.sqrt(C[0, 0] * C[2, 2])  # 特征参数 c_1 (Pa)
 
-    B = np.zeros(5)                 # 初始化 B 数组 (无量纲参数)
-    B[2] = np.sqrt(C[5, 5] / C[3, 3])  # B[2] = sqrt(C66/C44)
-    B[3] = np.sqrt((c_1 - C[0, 2]) * (c_1 + C[0, 2] + 2 * C[3, 3]) / (C[2, 2] * C[3, 3]))  # 各向异性参数
-    B[4] = np.sqrt((c_1 + C[0, 2]) * (c_1 - C[0, 2] - 2 * C[3, 3]) / (C[2, 2] * C[3, 3]))  # 各向异性参数
-    B[0] = 0.5 * (B[3] + B[4])      # B[0] = (B[3] + B[4])/2
-    B[1] = 0.5 * (B[3] - B[4])      # B[1] = (B[3] - B[4])/2
+    B = np.zeros(5)                                                                         # 初始化 B 数组 (无量纲参数)
+    B[2] = np.sqrt(C[5, 5] / C[3, 3])                                                       # B[2] = sqrt(C66/C44)
+    B[3] = np.sqrt((c_1 - C[0, 2]) * (c_1 + C[0, 2] + 2 * C[3, 3]) / (C[2, 2] * C[3, 3]))   # 各向异性参数
+    B[4] = np.sqrt((c_1 + C[0, 2]) * (c_1 - C[0, 2] - 2 * C[3, 3]) / (C[2, 2] * C[3, 3]))   # 各向异性参数
+    B[0] = 0.5 * (B[3] + B[4])                                                              # B[0] = (B[3] + B[4])/2
+    B[1] = 0.5 * (B[3] - B[4])                                                              # B[1] = (B[3] - B[4])/2
 
-    c_filling = 2.25e9              # 填充材料的弹性参数 (Pa)
+    c_filling = 2.25e9                          # 填充材料的弹性参数 (Pa)
 
     def __init__(self, dataPath):
         self.dataPath = dataPath
-        self.init_data()  # 调用加载数据的方法
-        self.effective_elastic_matrix()
+        self.init_data()                        # 根据提交的dataPath加载数据
+        self.effective_elastic_matrix()         # 计算有效弹性矩阵
         print(f'{dataPath} 数据加载完成')
 
 
@@ -91,6 +91,7 @@ class MainClass:
     def init_data(self):
         """
         根据文件类型加载裂隙数据
+        radius_aperture_record数组的形状是(5, 20, 200, 6)，代表（5个子模型，20个裂隙，200个应力，6组不同大小裂隙组合的模型）
         """
         # 根据文件扩展名判断是mat文件还是json文件
         file_extension = os.path.splitext(self.dataPath)[1].lower()
@@ -98,17 +99,17 @@ class MainClass:
             # 加载mat文件
             data = loadmat(self.dataPath)
             # mat文件加载后的数据结构不一样，可能需要调整
-            self.aperture_record = data['aperture_record']      # 裂隙开度记录 (m), shape = (5, 20, 200, 6)
-            self.radius_record = data['radius_record']          # 裂隙半径记录 (m), shape = (5, 20, 200, 6)
-            self.P = data['sx'].flatten()                       # 应力数组 (Pa), mat文件加载后通常需要平展数组
+            self.aperture_record = data['aperture_record']              # 裂隙开度记录 (m), shape = (5, 20, 200, 6)
+            self.radius_record = data['radius_record']                  # 裂隙半径记录 (m), shape = (5, 20, 200, 6)
+            self.P = data['sx'].flatten()                               # 应力数组 (Pa), mat文件加载后通常需要平展数组
             print('路径正确')
         elif file_extension == '.json':
             # 加载json文件
             with open(self.dataPath, 'r', encoding='utf-8') as f:
                 data = json.load(f)
-            self.aperture_record = np.array(data['aperture_record'])  # 裂隙开度记录 (m)
-            self.radius_record = np.array(data['radius_record'])      # 裂隙半径记录 (m)
-            self.P = np.array(data['sx'])                            # 应力数组 (Pa)
+            self.aperture_record = np.array(data['aperture_record'])
+            self.radius_record = np.array(data['radius_record'])
+            self.P = np.array(data['sx'])
             print('路径正确')
         else:
             raise ValueError(f"不支持的文件格式: {file_extension}，只支持.mat和.json文件")
@@ -152,7 +153,7 @@ class MainClass:
                     self.C_eff[xa, xc, :, :, xd] = np.linalg.inv(S)  # 有效弹性矩阵 (Pa)
 
 
-    # 计算角度-波速数据 (先平均C_eff，再计算波速)
+    # 计算每组模型的角度-平均波速数据 (先平均C_eff，再计算波速)
     def angle_velocity(self):
         """
         原始方法：先平均弹性矩阵，再计算波速
@@ -184,8 +185,8 @@ class MainClass:
             for am in range(200):
                 C = C_stress[am, :, :]
                 V_dry, CC = modulus_dry_stress(MainClass.c_1, radian, C, MainClass.density, self.a1, self.a2, self.a3, self.p, MainClass.B, self.c_density)
-                V_average[:, am, ak] = V_dry[:, 0]    # 入射角degree度
-        return V_average 
+                V_average[:, am, ak] = V_dry[:, 0]      # 入射角degree度
+        return V_average                                # (3, 200, 6)
 
 
 
@@ -256,11 +257,6 @@ if __name__ == '__main__':
 
     model1 = MainClass(dataPath=model1Path)
     model2 = MainClass(dataPath=model2Path)
-
-    
-
-    # savemat(f'E:\\OneDrive\\Project\\Innovation\\05_ProcessedData\\C_eff\\C_eff_ellipse.mat', {'C_eff': model1.C_eff})
-    # savemat(f'E:\\OneDrive\\Project\\Innovation\\05_ProcessedData\\C_eff\\C_eff_polygonal.mat', {'C_eff': model2.C_eff})
 
     # CC_ellipse = model1.CC()
     # CC_polygonal = model2.CC()
@@ -389,7 +385,7 @@ if __name__ == '__main__':
         titles = ['20AR1', '16AR1+4AR2', '12AR1+8AR2', '8AR1+12AR2', '4AR1+16AR2', '20AR2']
 
         fig1, axes1 = plt.subplots(2, 3, figsize=(12, 8))
-        fig1.suptitle('vp速度对比图', fontsize=16)
+        fig1.suptitle(f'入射角{degree}度-vp速度对比图', fontsize=16)
         for i in range(2):
             for j in range(3):
                 index = i * 3 + j
@@ -403,7 +399,7 @@ if __name__ == '__main__':
         plt.tight_layout()
 
         fig2, axes2 = plt.subplots(2, 3, figsize=(12, 8))
-        fig2.suptitle('vsv速度对比图', fontsize=16)
+        fig2.suptitle(f'入射角{degree}度-vsv速度对比图', fontsize=16)
         for i in range(2):
             for j in range(3):
                 index = i * 3 + j
@@ -417,7 +413,7 @@ if __name__ == '__main__':
         plt.tight_layout()
 
         fig3, axes3 = plt.subplots(2, 3, figsize=(12, 8))
-        fig3.suptitle('vsh速度对比图', fontsize=16)
+        fig3.suptitle(f'入射角{degree}度-vsh速度对比图', fontsize=16)
         for i in range(2):
             for j in range(3):
                 index = i * 3 + j
@@ -431,15 +427,15 @@ if __name__ == '__main__':
         plt.tight_layout()
         plt.show()
 
-        np.savetxt(f'E:\\OneDrive\\Project\\Innovation\\05_ProcessedData\\velocity\\isotropic_matrix\\n_20\\degree_45\\vp_ellipse.csv', v_ellipse[0, :, :], delimiter=',')
-        np.savetxt(f'E:\\OneDrive\\Project\\Innovation\\05_ProcessedData\\velocity\\isotropic_matrix\\n_20\\degree_45\\vp_polygonal.csv', v_polygonal[0, :, :], delimiter=',')
-        np.savetxt(f'E:\\OneDrive\\Project\\Innovation\\05_ProcessedData\\velocity\\isotropic_matrix\\n_20\\degree_45\\vsv_ellipse.csv', v_ellipse[1, :, :], delimiter=',')
-        np.savetxt(f'E:\\OneDrive\\Project\\Innovation\\05_ProcessedData\\velocity\\isotropic_matrix\\n_20\\degree_45\\vsv_polygonal.csv', v_polygonal[1, :, :], delimiter=',')
-        np.savetxt(f'E:\\OneDrive\\Project\\Innovation\\05_ProcessedData\\velocity\\isotropic_matrix\\n_20\\degree_45\\vsh_ellipse.csv', v_ellipse[2, :, :], delimiter=',')
-        np.savetxt(f'E:\\OneDrive\\Project\\Innovation\\05_ProcessedData\\velocity\\isotropic_matrix\\n_20\\degree_45\\vsh_polygonal.csv', v_polygonal[2, :, :], delimiter=',')
-        print(f'已保存到 E:\\OneDrive\\Project\\Innovation\\05_ProcessedData\\velocity\\isotropic_matrix\\n_20\\degree_45')
+        np.savetxt(f'D:\\Projects\\02_Innovation\\05_ProcessedData\\velocity\\n_20_deg_0\\vp_ellipse.csv', v_ellipse[0, :, :], delimiter=',')
+        np.savetxt(f'D:\\Projects\\02_Innovation\\05_ProcessedData\\velocity\\n_20_deg_0\\vp_polygonal.csv', v_polygonal[0, :, :], delimiter=',')
+        np.savetxt(f'D:\\Projects\\02_Innovation\\05_ProcessedData\\velocity\\n_20_deg_0\\vsv_ellipse.csv', v_ellipse[1, :, :], delimiter=',')
+        np.savetxt(f'D:\\Projects\\02_Innovation\\05_ProcessedData\\velocity\\n_20_deg_0\\vsv_polygonal.csv', v_polygonal[1, :, :], delimiter=',')
+        np.savetxt(f'D:\\Projects\\02_Innovation\\05_ProcessedData\\velocity\\n_20_deg_0\\vsh_ellipse.csv', v_ellipse[2, :, :], delimiter=',')
+        np.savetxt(f'D:\\Projects\\02_Innovation\\05_ProcessedData\velocity\\n_20_deg_0\\vsh_polygonal.csv', v_polygonal[2, :, :], delimiter=',')
+        print(f'已保存到 D:\\Projects\\02_Innovation\\05_ProcessedData\\velocity\\n_20_deg_0')
         
     # plot_average_velocity(model1, model2, 0)
-    plot_average_velocity_new(model1, model2, 45)
+    plot_average_velocity_new(model1, model2, 0)
 
 

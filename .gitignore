@@ -1,8 +1,12 @@
 # 忽略所有输出数据
+01_Config
 03_InputData
 04_COMSOL_Output/
 05_ProcessedData/
 06_Results/
+07_Docs/
+08_Data/
+09_Project_Records/
 
 # 忽略大文件/中间文档
 *.csv
@@ -15,7 +19,6 @@
 *.class
 
 # 忽略报告草稿或本地文档
-07_Docs/
 *.docx
 *.pdf
 
@@ -25,6 +28,3 @@ jdk-11/
 .vscode/
 __pycache__/
 *.pyc
-
-Data/
-Project_Records/
