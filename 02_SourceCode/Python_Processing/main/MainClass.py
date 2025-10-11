@@ -252,8 +252,8 @@ class MainClass:
 
 if __name__ == '__main__':
 
-    model1Path = '.\\05_ProcessedData\\record\\ellipse_data_aligned_radius_aperture_record.json'
-    model2Path = '.\\05_ProcessedData\\record\\polygonal_data_radius_aperture_record.json'
+    model1Path = '.\\05_ProcessedData\\radius_aperture_record\\ellipse_data_aligned_radius_aperture_record.json'
+    model2Path = '.\\05_ProcessedData\\radius_aperture_record\\polygonal_data_radius_aperture_record.json'
 
     model1 = MainClass(dataPath=model1Path)
     model2 = MainClass(dataPath=model2Path)
@@ -432,7 +432,7 @@ if __name__ == '__main__':
         np.savetxt(f'D:\\Projects\\02_Innovation\\05_ProcessedData\\velocity\\n_20_deg_0\\vsv_ellipse.csv', v_ellipse[1, :, :], delimiter=',')
         np.savetxt(f'D:\\Projects\\02_Innovation\\05_ProcessedData\\velocity\\n_20_deg_0\\vsv_polygonal.csv', v_polygonal[1, :, :], delimiter=',')
         np.savetxt(f'D:\\Projects\\02_Innovation\\05_ProcessedData\\velocity\\n_20_deg_0\\vsh_ellipse.csv', v_ellipse[2, :, :], delimiter=',')
-        np.savetxt(f'D:\\Projects\\02_Innovation\\05_ProcessedData\velocity\\n_20_deg_0\\vsh_polygonal.csv', v_polygonal[2, :, :], delimiter=',')
+        np.savetxt(f'D:\\Projects\\02_Innovation\\05_ProcessedData\\velocity\\n_20_deg_0\\vsh_polygonal.csv', v_polygonal[2, :, :], delimiter=',')
         print(f'已保存到 D:\\Projects\\02_Innovation\\05_ProcessedData\\velocity\\n_20_deg_0')
         
     # plot_average_velocity(model1, model2, 0)
