@@ -16,6 +16,8 @@ for i = 1:length(P)
     A(i) = integral(@(x) integrand(x, c, b, c0), -c, c);
 end
 
+A = 2 * A;  % 乘以2表示上下面积之和
+
 % 绘图
 figure('Position', [100, 100, 600, 400]);
 plot(P/1e6, A*1e6, 'b-', 'LineWidth', 2);  % P 单位换成MPa，A换成 mm²/m
