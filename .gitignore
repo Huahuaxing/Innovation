@@ -4,8 +4,8 @@
 04_COMSOL_Output/
 05_ProcessedData/
 06_Results/
-07_Docs/
-08_Data/
+07_Data/
+08_Docs/
 09_Project_Records/
 
 # 忽略大文件/中间文档

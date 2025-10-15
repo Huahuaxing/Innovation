@@ -1,18 +1,19 @@
-import numpy as np
-import json
-from scipy.io import loadmat
-from scipy.io import savemat
 import os
 import sys
+import json
+import numpy as np
+from scipy.io import loadmat
+from scipy.io import savemat
 import matplotlib.pyplot as plt
+
+from utils.modulus_dry_inclined import modulus_dry_inclined
+from utils.modulus_dry_stress import modulus_dry_stress
 
 plt.rcParams['font.sans-serif'] = ['SimHei']  # 使用黑体
 plt.rcParams['axes.unicode_minus'] = False    # 正确显示负号
 
 sys.path.append((os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
 
-from utils.modulus_dry_inclined import modulus_dry_inclined
-from utils.modulus_dry_stress import modulus_dry_stress
 
 class MainClass:
     sita = np.linspace(0, np.pi, 31) # 波速角度数组，生成从0到π等间隔的31个点 (弧度)，数组索引序号0代表0度，
@@ -84,7 +85,7 @@ class MainClass:
         self.dataPath = dataPath
         self.init_data()                        # 根据提交的dataPath加载数据
         self.effective_elastic_matrix()         # 计算有效弹性矩阵
-        print(f'{dataPath} 数据加载完成')
+        print(f'数据路径：{dataPath}，有效弹性矩阵构造完成！')
 
 
     # 加载三个数据 （aperture_record, radius_record, sx）
