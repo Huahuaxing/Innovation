@@ -1,35 +1,27 @@
-aa = load('D:\Projects\02_Innovation\06_Results\03_Single_Crack_Area\Table41.txt');
+% 参数
+b = 1e-4/2;
+c0 = 0.036/2;
+nu = 0.15;
+mu0 = 2.59e9;
+kn = 1e12; % 裂隙法向刚度 (Pa/m)，可从COMSOL接触对导出近似值
 
-format long g
+P = 0:-0.02:-1.00;
+P = P * 100e6;
 
-x = aa(:,1);
-y = aa(:,2);
+A = zeros(size(P));
+for i = 1:length(P)
+    A(i) = integral(@(x) max(w0(x,b,c0) - abs(P(i))/kn, 0), -c0, c0);
+end
 
-figure;
-plot(x, y, '-o', 'LineWidth', 1.2, 'MarkerSize', 4);
+figure('Position',[100,100,600,400]);
+plot(P/1e6, A*1e6, 'b-', 'LineWidth', 2);
+xlabel('Stress P (MPa)');
+ylabel('Area (mm^2)');
+title('Crack effective open area under compressive stress');
 grid on;
-xlabel('列 1');
-ylabel('列 2');
-title('Table42: 列1 vs 列2');
 
-% 保存图像到指定目录（示例）
-outdir = 'D:\Projects\02_Innovation\06_Results\03_Single_Crack_Area\figures';
-if ~exist(outdir, 'dir'), mkdir(outdir); end
-
-% 文件名（可改）
-fname_png = fullfile(outdir, 'Table41.png');
-fname_pdf = fullfile(outdir, 'Table41.pdf');
-fname_fig = fullfile(outdir, 'Table41.fig');
-
-% 方法A：高质量导出（MATLAB R2020a 及以后推荐）
-exportgraphics(gcf, fname_png, 'Resolution', 300);
-
-% 方法B：经典的 print，指定分辨率
-% print(gcf, '-dpng', fname_png, '-r300');
-
-% 方法C：保存为 MATLAB 可恢复的 .fig
-% savefig(gcf, fname_fig);
-
-% 方法D：简单保存（格式由扩展名决定）
-% saveas(gcf, fname_pdf);
-% ...existing code...
+function y = w0(x,b,c0)
+    % 初始裂隙形状：椭圆开度分布
+    y = 2*b*(1 - (x/c0).^2).^0.5;
+    y(abs(x)>c0) = 0;
+end
