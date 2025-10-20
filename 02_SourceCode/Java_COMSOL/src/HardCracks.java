@@ -1,5 +1,4 @@
-// import java.util.List;
-
+// 硬裂隙的开度较大，软裂隙的开度较小
 // 要生成不同组模型，只需要修改m和addCrackData中的参数
 
 import java.io.File;
@@ -18,7 +17,7 @@ public class HardCracks {
      public static Model run(int n){
 
           int group = 6;
-        //   String[] groupName = {"20AR1", "20AR2", "4AR1+16AR2", "8AR1+12AR2", "12AR1+8AR2", "16AR1+4AR2"};
+          //String[] groupName = {"20AR1", "20AR2", "4AR1+16AR2", "8AR1+12AR2", "12AR1+8AR2", "16AR1+4AR2"};
 
           // 裂隙类型，椭圆或多边形
           String crackType = "polygon";
@@ -271,20 +270,20 @@ public class HardCracks {
 
           
 
-        //   // 创建2D绘图
-        //   model.result().create("pg1", "PlotGroup2D");
-        //   model.result("pg1").label("\u5e94\u529b (solid)");
-        //   model.result("pg1").set("frametype", "spatial");
-        //   model.result("pg1").create("surf1", "Surface");
-        //   model.result("pg1").feature("surf1")
-        //        .set("const", new String[][]{{"solid.refpntx", "0", "\u529b\u77e9\u8ba1\u7b97\u53c2\u8003\u70b9\uff0cx \u5750\u6807"}, {"solid.refpnty", "0", "\u529b\u77e9\u8ba1\u7b97\u53c2\u8003\u70b9\uff0cy \u5750\u6807"}, {"solid.refpntz", "0", "\u529b\u77e9\u8ba1\u7b97\u53c2\u8003\u70b9\uff0cz \u5750\u6807"}});
-        //   model.result("pg1").feature("surf1").set("colortable", "Prism");
-        //   model.result("pg1").feature("surf1").set("threshold", "manual");
-        //   model.result("pg1").feature("surf1").set("thresholdvalue", 0.2);
-        //   model.result("pg1").feature("surf1").set("resolution", "normal");
-        //   model.result("pg1").feature("surf1").set("expr", "solid.mises");
-        //   model.result("pg1").feature("surf1").create("def", "Deform");
-        //   model.result("pg1").feature("surf1").feature("def").set("scaleactive", true);
+          //   // 创建2D绘图
+          //   model.result().create("pg1", "PlotGroup2D");
+          //   model.result("pg1").label("\u5e94\u529b (solid)");
+          //   model.result("pg1").set("frametype", "spatial");
+          //   model.result("pg1").create("surf1", "Surface");
+          //   model.result("pg1").feature("surf1")
+          //        .set("const", new String[][]{{"solid.refpntx", "0", "\u529b\u77e9\u8ba1\u7b97\u53c2\u8003\u70b9\uff0cx \u5750\u6807"}, {"solid.refpnty", "0", "\u529b\u77e9\u8ba1\u7b97\u53c2\u8003\u70b9\uff0cy \u5750\u6807"}, {"solid.refpntz", "0", "\u529b\u77e9\u8ba1\u7b97\u53c2\u8003\u70b9\uff0cz \u5750\u6807"}});
+          //   model.result("pg1").feature("surf1").set("colortable", "Prism");
+          //   model.result("pg1").feature("surf1").set("threshold", "manual");
+          //   model.result("pg1").feature("surf1").set("thresholdvalue", 0.2);
+          //   model.result("pg1").feature("surf1").set("resolution", "normal");
+          //   model.result("pg1").feature("surf1").set("expr", "solid.mises");
+          //   model.result("pg1").feature("surf1").create("def", "Deform");
+          //   model.result("pg1").feature("surf1").feature("def").set("scaleactive", true);
           
           // 2D points
           double leftX = 0;

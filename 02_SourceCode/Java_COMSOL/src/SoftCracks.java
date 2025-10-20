@@ -13,16 +13,15 @@ import com.comsol.model.util.*;
 
 public class SoftCracks {
 
-     static int num_cycles = 5;
+     static int num_cycles = 5;         // 子模型个数
 
      public static Model run(int n){
 
-          int group = 6;
+          int group = 6;                // 模型组数
+          
+          String crackType = "ellipse"; // 裂隙类型，椭圆或多边形
 
-          // 裂隙类型，椭圆或多边形
-          String crackType = "ellipse";
-
-          Crack crack = new Crack(2);
+          Crack crack = new Crack(2);   // 创建两种不同形状的裂隙
 
           crack.addCrackData("AR1", 0.0001, 0.018, 16);
           crack.addCrackData("AR2", 0.00005, 0.018, 4);
