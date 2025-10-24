@@ -9,7 +9,6 @@
 09_Project_Records/
 
 # 忽略大文件/中间文档
-*.csv
 *.xlsx
 *.pkl
 *.vtu
