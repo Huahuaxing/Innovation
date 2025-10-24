@@ -10,7 +10,7 @@ P = data1["P"]
 
 # 读取现有的 CSV 文件（使用读取模式 "r"）
 data2 = []
-with open("./05_ProcessedData/velocity/old/isotropic_matrix/n_20/degree_90/vp_polygonal.csv", "r") as f:  # 使用 vp_ellipse.csv 而不是空的 vp_polygonal.csv
+with open("D:/Projects/Innovation/isotropic_matrix/n_20/degree_90/vp_polygonal.csv", "r") as f:  # 使用 vp_ellipse.csv 而不是空的 vp_polygonal.csv
     csv_reader = csv.reader(f)
     for row in csv_reader:
         if row:  # 确保行不为空
@@ -22,8 +22,8 @@ print(f"data2 length: {len(data2)}")
 a = []
 min_length = min(len(P), len(data2))
 for i in range(min_length):
-    a.append(f"({P[i]},{data2[i]})")
+    a.append(f"({P[i]/1e6},{data2[i]})")
 
-with open("./a.txt", "w") as f:
+with open("./b.txt", "w") as f:
     for item in a:
         f.write(item + "\n")
