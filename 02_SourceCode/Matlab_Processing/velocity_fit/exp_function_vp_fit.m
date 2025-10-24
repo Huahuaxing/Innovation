@@ -7,7 +7,7 @@ clear; clc; close all;
 prop = jsondecode(fileread('properties.json'));
 
 cd(fileparts(mfilename('fullpath')))
-nonellipse_vp_path = fullfile(".\degree_0\vp_polygonal.csv");
+nonellipse_vp_path = fullfile(".\degree_90\vp_polygonal.csv");
 nonellipse_de0_vp = readmatrix(nonellipse_vp_path);
 
 cycle = 6;
@@ -16,7 +16,7 @@ model_fun = @(params, P) params(1) + params(2)*P - params(3)*exp(-P*params(4));
 % params = [A, K, B, D]
 
 %% 初始猜测参数
-params0 = [1200, 0, 0, 0];  % 可根据数据范围调整初值
+params0 = [2071, 0.0000009, 66, 0.0000001];  % 可根据数据范围调整初值
 
 %% 执行非线性最小二乘拟合
 params_fit_all = cell(1,6);   % 存拟合后的参数
@@ -45,7 +45,7 @@ for group = 1:cycle
     plot(prop.P, nonellipse_de0_vp(:,indices(group)), 'r-', 'LineWidth',1.6);
     hold on;
     h1 = plot(prop.P, vp_fit, 'b-', 'LineWidth', 1.6);
-    legend(h1, sprintf('A = %.4f, K = %.4f, B = %.4f, D = %.4f', params_fit_all{group}(1), params_fit_all{group}(2), params_fit_all{group}(3), params_fit_all{group}(4)), 'Location', 'best');
+    legend(h1, sprintf('A = %.9f, K = %.9f, B = %.9f, D = %.9f', params_fit_all{group}(1), params_fit_all{group}(2), params_fit_all{group}(3), params_fit_all{group}(4)), 'Location', 'best');
     xlabel('Uniaxial Stress Pa');
     ylabel('v_p  (m/s)');
     title(titles{group});
