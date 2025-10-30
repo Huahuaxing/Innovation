@@ -13,19 +13,20 @@ mu      = 3.180e9;      % 剪切模量 (Pa)
 % lam = E*nu/((1+nu)*(1-2*nu));        % 若需用公式计算
 
 %% ---------- 读取文件中波速数据 ----------
-v11_polygonal = fullfile('E:\\OneDrive\\Project\\Innovation\\05_ProcessedData\\velocity\\isotropic_matrix\\n_20\\degree_90\\vp_polygonal.csv');
+basePath = '';
+v11_polygonal = fullfile('D:\\Projects\\02_Innovation\\05_ProcessedData\\velocity\\isotropic_matrix\\n_20\\degree_90\\vp_polygonal.csv');
 v11_polygonal_data = readmatrix(v11_polygonal);   % 形状 (200,6)
 
-v33_polygonal = fullfile('E:\\OneDrive\\Project\\Innovation\\05_ProcessedData\\velocity\\isotropic_matrix\\n_20\\degree_0\\vp_polygonal.csv');
+v33_polygonal = fullfile('D:\\Projects\\02_Innovation\\05_ProcessedData\\velocity\\isotropic_matrix\\n_20\\degree_0\\vp_polygonal.csv');
 v33_polygonal_data = readmatrix(v33_polygonal);
 
-v31_polygonal = fullfile('E:\\OneDrive\\Project\\Innovation\\05_ProcessedData\\velocity\\isotropic_matrix\\n_20\\degree_0\\vsv_polygonal.csv');
+v31_polygonal = fullfile('D:\\Projects\\02_Innovation\\05_ProcessedData\\velocity\\isotropic_matrix\\n_20\\degree_0\\vsv_polygonal.csv');
 v31_polygonal_data = readmatrix(v31_polygonal);
 
-v12_polygonal = fullfile('E:\\OneDrive\\Project\\Innovation\\05_ProcessedData\\velocity\\isotropic_matrix\\n_20\\degree_90\\vsh_polygonal.csv');
+v12_polygonal = fullfile('D:\\Projects\\02_Innovation\\05_ProcessedData\\velocity\\isotropic_matrix\\n_20\\degree_90\\vsh_polygonal.csv');
 v12_polygonal_data = readmatrix(v12_polygonal);
 
-vp_de_45_polygonal = fullfile('E:\\OneDrive\\Project\\Innovation\\05_ProcessedData\\velocity\\isotropic_matrix\\n_20\\degree_45\\vp_polygonal.csv');
+vp_de_45_polygonal = fullfile('D:\\Projects\\02_Innovation\\05_ProcessedData\\velocity\\isotropic_matrix\\n_20\\degree_45\\vp_polygonal.csv');
 vp_de_45_polygonal_data = readmatrix(vp_de_45_polygonal);
 
 % 给原数据的列调换一下位置，按照titles的顺序分布
