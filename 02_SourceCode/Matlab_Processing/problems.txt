@@ -1,0 +1,12 @@
+Verify these issues exist and fix them:
+
+Bug 1:
+The nested loops iterate through all 20 cracks and 5 sub-models for each stress and group, but the result `V_dry(stressNum, :, :, groupNum)` is overwritten in every iteration of the inner loops instead of being computed once per stress state. Only the velocity from the last crack (crackNum=20) and last sub-model (subNum=5) is stored. This produces incorrect wave velocity calculations that don't account for the actual combination of all cracks. Compare with `Func_C_eff.m` which properly accumulates contributions from all cracks using `Z_intermediate`.
+
+Bug 2:
+The hardcoded path references `03_Calculate_Ceff_and_Wave_Velocity` but the actual directory is named `03_Ceff_and_Wave_Velocity` (without the word "Calculate"). The `mkdir` command on line 9-10 will fail when trying to create the directory with this incorrect path, preventing the script from saving results.
+
+Bug 3:
+The code attempts to access `prop.mu` but the JSON structure created in `parameters_enjson.m` defines the field as `params.MU` (uppercase). In MATLAB, JSON field names are case-sensitive. This will cause a runtime error: "Reference to non-existent field 'mu'" when the script tries to load and access the property.
+
+ @02_SourceCode/Matlab_Processing/Research/03_Ceff_and_Wave_Velocity/source/Velocity/Func_Velocity.m:7-26 @02_SourceCode/Matlab_Processing/Research/03_Ceff_and_Wave_Velocity/source/visualize/visualize_velocity_change.m:5-6 @02_SourceCode/Matlab_Processing/Research/05_Crack_Area_change/source/paper_area_change.m:7-8 

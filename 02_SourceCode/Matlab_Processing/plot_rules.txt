@@ -1,0 +1,2 @@
+1、子图标题形式：(a)
+2、大标题fontsize-14，子图fontsize-12，xylabel fontsize-11
