@@ -1,15 +1,12 @@
 # 忽略所有输出数据
-01_Config
-03_InputData
-04_COMSOL_output/
 05_Data/
-# 06_ProcessedData/
+06_ProcessedData/
 07_Research/
 08_Docs/
 09_Project_Records/
+jdk-11/
 
 # 忽略大文件/中间文档
-results/
 *.xlsx
 *.pkl
 *.vtu
@@ -23,7 +20,6 @@ results/
 *.pdf
 
 # environment / tools
-jdk-11/
 .idea/
 .vscode/
 __pycache__/

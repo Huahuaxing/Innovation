@@ -1,9 +1,8 @@
-%% 数据处理区
+%% 数据初始化
+clear;
 cd(fileparts(mfilename("fullpath")))
 params = jsondecode(fileread('../../../../06_ProcessedData/parameters.json'));
 P = params.P(:) / 1e6;  % 转换为MPa，列向量
-modelParams = {'20AR1', '16AR1+4AR2', '12AR1+8AR2', '8AR1+12AR2', '4AR1+16AR2', '20AR2'};
-subTitleList = {'(a)', '(b)', '(c)', '(d)', '(e)', '(f)'};
 
 % 图像保存路径设置
 saveBaseDir = 'D:\Projects\02_Innovation\07_Research\01_Aperture_Radius\Figure\01_threshold_algorithm';
@@ -33,6 +32,8 @@ apertureNonEllipseNorm     = apertureNonEllipse     ./ maxApertureNonEllipse;
 
 %% 绘图1 （contain ellipseAligned）
 % P-Aperture 多模型对比图
+modelParams = {'20AR1', '16AR1+4AR2', '12AR1+8AR2', '8AR1+12AR2', '4AR1+16AR2', '20AR2'};
+subTitleList = {'(a)', '(b)', '(c)', '(d)', '(e)', '(f)'};
 figure('Color',[1 1 1], 'Position', [0 0 2000 1000]);
 sgtitle('Uniaxial Stress-Aperture', 'FontSize', 14, 'FontWeight','bold');
 ax = gobjects(1, 6);

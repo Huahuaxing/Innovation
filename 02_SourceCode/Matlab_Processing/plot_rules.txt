@@ -1,2 +1,7 @@
-1、子图标题形式：(a)
-2、大标题fontsize-14，子图fontsize-12，xylabel fontsize-11
+figure('Color',[1 1 1], 'Position', [0 0 2000 1000]);
+sgtitle('xxxx', 'FontSize', 14, 'FontWeight','bold');
+
+plot(xdata, ydata, '-x', 'LineWidth', 1.5); hold on;
+
+1、子图标题形式：(a)-(f)
+2、大标题fontsize-14，子图标题fontsize-12，xylabel fontsize-11
