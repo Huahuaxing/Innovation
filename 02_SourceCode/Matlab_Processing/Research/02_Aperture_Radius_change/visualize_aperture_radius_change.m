@@ -26,6 +26,7 @@ radiusNonEllipse = squeeze(mean(mean(nonellipseData.radius_record,2),1));
 maxApertureEllipse         = max(apertureEllipse,        [], 1);  % 1×6
 maxApertureEllipseAligned  = max(apertureEllipseAligned, [], 1);
 maxApertureNonEllipse      = max(apertureNonEllipse,     [], 1);
+
 apertureEllipseNorm        = apertureEllipse        ./ maxApertureEllipse;
 apertureEllipseAlignedNorm = apertureEllipseAligned ./ maxApertureEllipseAligned;
 apertureNonEllipseNorm     = apertureNonEllipse     ./ maxApertureNonEllipse;

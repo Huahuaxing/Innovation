@@ -1,16 +1,16 @@
-% 通过comsol数据，绘制出裂隙形态变化图，先绘制1-1模型第一个裂隙
+% 通过comsol导出的位移数据，绘制出裂隙形态变化图，选择1-1模型的第一个裂隙
+% 三个裂隙的位置坐标：()()()
 %% 数据初始化
 clear;
 cd(fileparts(mfilename("fullpath")))
-
 jsonPath = "../../../../06_ProcessedData";
 jsonFile = fullfile(jsonPath, "parameters.json");
 params = jsondecode(fileread(jsonFile));
 P = params.P;
 
-dataPathEllipse = 'D:\Projects\02_Innovation\05_Data\SoftCrack\ellipse_data';
-dataPathEllipseAligned= 'D:\Projects\02_Innovation\05_Data\SoftCrack\ellipse_data_aligned';
-dataPathNonellipse = 'D:\Projects\02_Innovation\05_Data\SoftCrack\polygonal_data';
+dataPathEllipse = '..\..\..\..\05_Data\SoftCrack\ellipse_data\distance';
+dataPathEllipseAligned= '..\..\..\..\05_Data\SoftCrack\ellipse_data_aligned\distance';
+dataPathNonellipse = '..\..\..\..\05_Data\SoftCrack\polygonal_data\distance';
 
 aaEllipse = zeros(40, 200, 43);
 for tab = 1:40  % 四十个表格
@@ -34,50 +34,51 @@ for tab = 1:40  % 四十个表格
 end
 
 point_n = floor((size(aaEllipse, 3)-1)/2);
-pointy_start_idx = size(aaEllipse, 3) - point_n + 1;   % Matlab索引从1开始
+pointy_start_idx = point_n + 2;   % Matlab索引从1开始
+
+
 %% 绘图区 
 figure("Position",[0 0 1500 1200]);
 sgtitle("Single Crack Shape Changes", "FontSize", 18, "FontWeight","bold");
-row = 8;
+row = 10;
 column = 3;
-for k = 1:8
+stressIndex = 1:20:200;
+ax = gobjects(row, column);
+for r = 1:row
+    for c = 1:column
+        % --- 列 1：椭圆 ---
+        subplot(row,column,(r-1)*3 + 1);
+        xdataA = squeeze(aaEllipse(1,stressIndex(k),2:pointy_start_idx-1));
+        ydataA = squeeze(aaEllipse(1,stressIndex(k),pointy_start_idx:end));
+        xdataB = squeeze(aaEllipse(2,stressIndex(k),2:pointy_start_idx-1));
+        ydataB = squeeze(aaEllipse(2,stressIndex(k),pointy_start_idx:end));
+        plot(xdataA, ydataA, 'b-', 'LineWidth', 1.5);hold on;
+        plot(xdataB, ydataB, 'b-', 'LineWidth', 1.5);
+        title(sprintf('[Ellipse] Stress %.2f MPa', P(stressIndex(k))/1e6));
+        xlabel('X'); ylabel('Y'); grid on;
 
-    % --- 列 1：椭圆 ---
-    subplot(row,column,(k-1)*3 + 1);
-    xdataA = squeeze(aaEllipse(1,k*20,2:pointy_start_idx-1));
-    ydataA = squeeze(aaEllipse(1,k*20,pointy_start_idx:end));
-    xdataB = squeeze(aaEllipse(2,k*20,2:pointy_start_idx-1));
-    ydataB = squeeze(aaEllipse(2,k*20,pointy_start_idx:end));
-    plot(xdataA, ydataA, 'b-', 'LineWidth', 1.5);hold on;
-    plot(xdataB, ydataB, 'b-', 'LineWidth', 1.5);
-    % ylim([min(ydataB), max(ydataA)]);
-    % ylim([0.1680, 0.1700]);
-    title(sprintf('[Ellipse] Stress %.2f MPa', P(k*20)/1e6));
-    xlabel('X'); ylabel('Y'); grid on;
+        % --- 列 2：对齐椭圆 ---
+        subplot(row,column,(r-1)*3 + 2);
+        xdataA = squeeze(aaEllipseAligned(1,stressIndex(k),2:pointy_start_idx-1));
+        ydataA = squeeze(aaEllipseAligned(1,stressIndex(k),pointy_start_idx:end));
+        xdataB = squeeze(aaEllipseAligned(2,stressIndex(k),2:pointy_start_idx-1));
+        ydataB = squeeze(aaEllipseAligned(2,stressIndex(k),pointy_start_idx:end));
+        plot(xdataA, ydataA, 'g-', 'LineWidth', 1.5);hold on;
+        plot(xdataB, ydataB, 'g-', 'LineWidth', 1.5);
+        title(sprintf('[Aligned] Stress %.2f MPa', P(stressIndex(k))/1e6));
+        xlabel('X'); ylabel('Y'); grid on;
 
-    % --- 列 2：对齐椭圆 ---
-    subplot(row,column,(k-1)*3 + 2);
-    xdataA = squeeze(aaEllipseAligned(1,k*20,2:pointy_start_idx-1));
-    ydataA = squeeze(aaEllipseAligned(1,k*20,pointy_start_idx:end));
-    xdataB = squeeze(aaEllipseAligned(2,k*20,2:pointy_start_idx-1));
-    ydataB = squeeze(aaEllipseAligned(2,k*20,pointy_start_idx:end));
-    plot(xdataA, ydataA, 'g-', 'LineWidth', 1.5);hold on;
-    plot(xdataB, ydataB, 'g-', 'LineWidth', 1.5);
-    % ylim([min(ydata), max(ydata)]);
-    title(sprintf('[Aligned] Stress %.2f MPa', P(k*20)/1e6));
-    xlabel('X'); ylabel('Y'); grid on;
-
-    % --- 列 3：非椭圆 ---
-    subplot(row,column,(k-1)*3 + 3);
-    xdataA = squeeze(aaNonellipse(1,k*20,2:pointy_start_idx-1));
-    ydataA = squeeze(aaNonellipse(1,k*20,pointy_start_idx:end));
-    xdataB = squeeze(aaNonellipse(2,k*20,2:pointy_start_idx-1));
-    ydataB = squeeze(aaNonellipse(2,k*20,pointy_start_idx:end));
-    ydataB = min(ydataA, ydataB);
-    plot(xdataA, ydataA, 'r-', 'LineWidth', 1.5);hold on;
-    plot(xdataB, ydataB, 'r-', 'LineWidth', 1.5);
-    % ylim([min(ydata), max(ydata)]);
-    title(sprintf('[Nonellipse] Stress %.2f MPa', P(k*20)/1e6));
-    xlabel('X'); ylabel('Y'); grid on;
+        % --- 列 3：非椭圆 ---
+        subplot(row,column,(r-1)*3 + 3);
+        xdataA = squeeze(aaNonellipse(1,stressIndex(k),2:pointy_start_idx-1));
+        ydataA = squeeze(aaNonellipse(1,stressIndex(k),pointy_start_idx:end));
+        xdataB = squeeze(aaNonellipse(2,stressIndex(k),2:pointy_start_idx-1));
+        ydataB = squeeze(aaNonellipse(2,stressIndex(k),pointy_start_idx:end));
+        ydataB = min(ydataA, ydataB);
+        plot(xdataA, ydataA, 'r-', 'LineWidth', 1.5);hold on;
+        plot(xdataB, ydataB, 'r-', 'LineWidth', 1.5);
+        title(sprintf('[Nonellipse] Stress %.2f MPa', P(stressIndex(k))/1e6));
+        xlabel('X'); ylabel('Y'); grid on;
+    end
 end
 
