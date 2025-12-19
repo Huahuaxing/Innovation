@@ -36,6 +36,16 @@ end
 point_n = floor((size(aaEllipse, 3)-1)/2);
 pointy_start_idx = point_n + 2;   % Matlab索引从1开始
 
+xEllipse = aaEllipse(1, 1, 2) + 0.018;
+yEllipse = aaEllipse(1, 1, pointy_start_idx);
+
+xEllipseAligned = aaEllipseAligned(1, 1, 2) + 0.018;
+yEllipseAligned = aaEllipseAligned(1, 1, pointy_start_idx);
+
+xNonellipse = aaNonellipse(1, 1, 2) + 0.018;
+yNonellipse = aaNonellipse(1, 1, pointy_start_idx);
+
+
 
 %% 绘图区 
 figure("Position",[0 0 1500 1200]);
@@ -45,40 +55,50 @@ column = 3;
 stressIndex = 1:20:200;
 ax = gobjects(row, column);
 for r = 1:row
-    for c = 1:column
-        % --- 列 1：椭圆 ---
-        subplot(row,column,(r-1)*3 + 1);
-        xdataA = squeeze(aaEllipse(1,stressIndex(k),2:pointy_start_idx-1));
-        ydataA = squeeze(aaEllipse(1,stressIndex(k),pointy_start_idx:end));
-        xdataB = squeeze(aaEllipse(2,stressIndex(k),2:pointy_start_idx-1));
-        ydataB = squeeze(aaEllipse(2,stressIndex(k),pointy_start_idx:end));
-        plot(xdataA, ydataA, 'b-', 'LineWidth', 1.5);hold on;
-        plot(xdataB, ydataB, 'b-', 'LineWidth', 1.5);
-        title(sprintf('[Ellipse] Stress %.2f MPa', P(stressIndex(k))/1e6));
-        xlabel('X'); ylabel('Y'); grid on;
-
-        % --- 列 2：对齐椭圆 ---
-        subplot(row,column,(r-1)*3 + 2);
-        xdataA = squeeze(aaEllipseAligned(1,stressIndex(k),2:pointy_start_idx-1));
-        ydataA = squeeze(aaEllipseAligned(1,stressIndex(k),pointy_start_idx:end));
-        xdataB = squeeze(aaEllipseAligned(2,stressIndex(k),2:pointy_start_idx-1));
-        ydataB = squeeze(aaEllipseAligned(2,stressIndex(k),pointy_start_idx:end));
-        plot(xdataA, ydataA, 'g-', 'LineWidth', 1.5);hold on;
-        plot(xdataB, ydataB, 'g-', 'LineWidth', 1.5);
-        title(sprintf('[Aligned] Stress %.2f MPa', P(stressIndex(k))/1e6));
-        xlabel('X'); ylabel('Y'); grid on;
-
-        % --- 列 3：非椭圆 ---
-        subplot(row,column,(r-1)*3 + 3);
-        xdataA = squeeze(aaNonellipse(1,stressIndex(k),2:pointy_start_idx-1));
-        ydataA = squeeze(aaNonellipse(1,stressIndex(k),pointy_start_idx:end));
-        xdataB = squeeze(aaNonellipse(2,stressIndex(k),2:pointy_start_idx-1));
-        ydataB = squeeze(aaNonellipse(2,stressIndex(k),pointy_start_idx:end));
-        ydataB = min(ydataA, ydataB);
-        plot(xdataA, ydataA, 'r-', 'LineWidth', 1.5);hold on;
-        plot(xdataB, ydataB, 'r-', 'LineWidth', 1.5);
-        title(sprintf('[Nonellipse] Stress %.2f MPa', P(stressIndex(k))/1e6));
-        xlabel('X'); ylabel('Y'); grid on;
+    % --- 列 1：椭圆 ---
+    subplot(row,column,(r-1)*3 + 1);
+    xdataA = squeeze(aaEllipse(1,stressIndex(r),2:pointy_start_idx-1));
+    ydataA = squeeze(aaEllipse(1,stressIndex(r),pointy_start_idx:end));
+    xdataB = squeeze(aaEllipse(2,stressIndex(r),2:pointy_start_idx-1));
+    ydataB = squeeze(aaEllipse(2,stressIndex(r),pointy_start_idx:end));
+    plot(xdataA, ydataA, 'b-', 'LineWidth', 1.5);hold on;
+    plot(xdataB, ydataB, 'b-', 'LineWidth', 1.5);
+    if r == 1
+        title(sprintf('[Ellipse model (%.3f %.3f)] Stress %.2f MPa', xEllipse, yEllipse, P(stressIndex(r))/1e6));
+    else
+        title(sprintf('[Ellipse model] Stress %.2f MPa', P(stressIndex(r))/1e6));
     end
+    xlabel('X'); ylabel('Y'); grid on;
+
+    % --- 列 2：对齐椭圆 ---
+    subplot(row,column,(r-1)*3 + 2);
+    xdataA = squeeze(aaEllipseAligned(1,stressIndex(r),2:pointy_start_idx-1));
+    ydataA = squeeze(aaEllipseAligned(1,stressIndex(r),pointy_start_idx:end));
+    xdataB = squeeze(aaEllipseAligned(2,stressIndex(r),2:pointy_start_idx-1));
+    ydataB = squeeze(aaEllipseAligned(2,stressIndex(r),pointy_start_idx:end));
+    plot(xdataA, ydataA, 'g-', 'LineWidth', 1.5);hold on;
+    plot(xdataB, ydataB, 'g-', 'LineWidth', 1.5);
+    if r == 1
+        title(sprintf('[EllipseAligned model (%.3f %.3f)] Stress %.2f MPa', xEllipseAligned, yEllipseAligned, P(stressIndex(r))/1e6));
+    else
+        title(sprintf('[EllipseAligned model] Stress %.2f MPa', P(stressIndex(r))/1e6));
+    end
+    xlabel('X'); ylabel('Y'); grid on;
+
+    % --- 列 3：非椭圆 ---
+    subplot(row,column,(r-1)*3 + 3);
+    xdataA = squeeze(aaNonellipse(1,stressIndex(r),2:pointy_start_idx-1));
+    ydataA = squeeze(aaNonellipse(1,stressIndex(r),pointy_start_idx:end));
+    xdataB = squeeze(aaNonellipse(2,stressIndex(r),2:pointy_start_idx-1));
+    ydataB = squeeze(aaNonellipse(2,stressIndex(r),pointy_start_idx:end));
+    ydataB = min(ydataA, ydataB);
+    plot(xdataA, ydataA, 'r-', 'LineWidth', 1.5);hold on;
+    plot(xdataB, ydataB, 'r-', 'LineWidth', 1.5);
+    if r == 1
+        title(sprintf('[Nonellipse model (%.3f %.3f)] Stress %.2f MPa', xNonellipse, yNonellipse, P(stressIndex(r))/1e6));
+    else
+        title(sprintf('[Nonellipse model] Stress %.2f MPa', P(stressIndex(r))/1e6));
+    end
+    xlabel('X'); ylabel('Y'); grid on;
 end
 
