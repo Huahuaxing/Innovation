@@ -1,5 +1,5 @@
 % =============================================
-% Stress-Vp 拟合脚本 (基于一次函数公式)
+% Stress-vsv 拟合脚本 (基于一次函数公式)
 % 公式: V(P) = a * P + b
 % =============================================
 clear;
@@ -11,26 +11,24 @@ P = prop.P;   % 应力数组
 groupNum = 6;
 
 % 加载椭圆模型波速数据，(200,6)
-vpEllipse = readmatrix('../../../../../06_ProcessedData/03_velocity/n_20_degree_0/vp/vp_ellipse.csv');
-dvdpEllipse = zeros(200, 6);
-for g=1:groupNum
-    dvdpEllipse(:, g) = gradient(vpEllipse(:,g), P);
-end
-[~, idx_max] = max(dvdpEllipse);
-win = 40;
+vsvEllipse = readmatrix('../../../../../06_ProcessedData/03_velocity/n_20_degree_0/vsv/vsv_Ellipse.csv');
+indexArray = [[30,100]; [22,88]; [26,79]; [35,70]; [16,55]; [16,52]];
 slopeEllipse = zeros(1, groupNum);
 interceptEllipse = zeros(1, groupNum);
+indexInterval = cell(1, groupNum);
+PInterval = cell(1, groupNum);
 for g = 1:groupNum
-    idx = (idx_max(g)-win):(idx_max(g)+win);
-    idx = idx(idx>=1 & idx<=length(P));
+    idx = indexArray(g, 1):indexArray(g, 2);
+    indexInterval{g} = idx; 
+    PInterval{g} = P(idx);
 
-    p = polyfit(P(idx), vpEllipse(idx, g), 1);
+    p = polyfit(P(idx), vsvEllipse(idx, g), 1);
     slopeEllipse(g) = p(1);
     interceptEllipse(g) = p(2);
 end
 % 椭圆对齐模型数据
-vpEllipseAligned = readmatrix('../../../../../06_ProcessedData/03_velocity/n_20_degree_0/vp/vp_ellipseAligned.csv');
-indexArray = [[30,117]; [16,117]; [20,100]; [20,75]; [20,75]; [16,60]];
+vsvEllipseAligned = readmatrix('../../../../../06_ProcessedData/03_velocity/n_20_degree_0/vsv/vsv_EllipseAligned.csv');
+indexArray = [[35,120]; [16,110]; [19,95]; [20,70]; [16,55]; [16,40]];
 slopeEllipseAligned = zeros(1, groupNum);
 interceptEllipseAligned = zeros(1, groupNum);
 indexInterval = cell(1, groupNum);
@@ -40,25 +38,25 @@ for g = 1:groupNum
     indexInterval{g} = idx; 
     PInterval{g} = P(idx);
 
-    p = polyfit(P(idx), vpEllipseAligned(idx, g), 1);
+    p = polyfit(P(idx), vsvEllipseAligned(idx, g), 1);
     slopeEllipseAligned(g) = p(1);
     interceptEllipseAligned(g) = p(2);
 end
 % 非椭圆模型数据
-vpNonellipse = readmatrix('../../../../../06_ProcessedData/03_velocity/n_20_degree_0/vp/vp_nonellipse.csv');
+vsvNonellipse = readmatrix('../../../../../06_ProcessedData/03_velocity/n_20_degree_0/vsv/vsv_nonellipse.csv');
 dvdpNonellipse = zeros(200, 6);
 for g=1:groupNum
-    dvdpNonellipse(:, g) = gradient(vpNonellipse(:,g), P);
+    dvdpNonellipse(:, g) = gradient(vsvNonellipse(:,g), P);
 end
 [~, idx_max] = max(dvdpNonellipse);
-win = 40;
+win = 20;
 slopeNonellipse = zeros(1, groupNum);
 interceptNonellipse = zeros(1, groupNum);
 for g = 1:groupNum
     idx = (idx_max(g)-win):(idx_max(g)+win);
     idx = idx(idx>=1 & idx<=length(P));
 
-    p = polyfit(P(idx), vpNonellipse(idx, g), 1);
+    p = polyfit(P(idx), vsvNonellipse(idx, g), 1);
     slopeNonellipse(g) = p(1);
     interceptNonellipse(g) = p(2);
 end
@@ -103,15 +101,15 @@ for g = 1:groupNum
     ellipseAligned_fit = slopeEllipseAligned(g) * P(1:120) + interceptEllipseAligned(g);
     Nonellipse_fit = slopeNonellipse(g) * P(1:120) + interceptNonellipse(g);
     hold on;
-    scatter(P(1:3:end)/1e6, vpEllipse(1:3:end,g), 18, 'b', 'filled', 'o','DisplayName','Ellipse model');
-    scatter(P(1:3:end)/1e6, vpEllipseAligned(1:3:end,g), 18, 'g', 'filled', 'o','DisplayName','EllipseAligned model');
-    scatter(P(1:3:end)/1e6, vpNonellipse(1:3:end,g), 18, 'r', 'filled', 'o','DisplayName','Nonellipse model');
+    scatter(P(1:3:end)/1e6, vsvEllipse(1:3:end,g), 18, 'b', 'filled', 'o','DisplayName','Ellipse model');
+    scatter(P(1:3:end)/1e6, vsvEllipseAligned(1:3:end,g), 18, 'g', 'filled', 'o','DisplayName','EllipseAligned model');
+    scatter(P(1:3:end)/1e6, vsvNonellipse(1:3:end,g), 18, 'r', 'filled', 'o','DisplayName','Nonellipse model');
     plot(P(1:120)/1e6, ellipse_fit, 'b-', 'LineWidth', 1.2, 'DisplayName','Fitting line for ellipse model');
     plot(P(1:120)/1e6, ellipseAligned_fit, 'g-', 'LineWidth', 1.2, 'DisplayName','Fitting line for ellipseAligned model');
     plot(P(1:120)/1e6, Nonellipse_fit, 'r-', 'LineWidth', 1.2, 'DisplayName','Fitting line for Nonellipse model');
     xlabel('Uniaxial Stress (MPa)', 'FontSize', 11);
     ylabel('V_p (m/s)', 'FontSize', 11);
-    ylim([1800, 2500]);
+    ylim([1170, 1400]);
     if g == 1
         legend('show','FontSize',8,'Location','southeast');
     end
