@@ -94,7 +94,7 @@ fprintf('====================================\n\n');
 modelParams = {'20AR1', '16AR1+4AR2', '12AR1+8AR2', '8AR1+12AR2', '4AR1+16AR2', '20AR2'};
 subTitleList = {'(a)', '(b)', '(c)', '(d)', '(e)', '(f)'};
 figure('Position', [0 0 2000 1000]);
-sgtitle('Fitting Result', 'FontSize', 14, 'FontWeight','bold');
+% sgtitle('Fitting Result', 'FontSize', 14, 'FontWeight','bold');
 ax = gobjects(1, 6);
 for g = 1:groupNum
     ax(g) = subplot(2,3,g);

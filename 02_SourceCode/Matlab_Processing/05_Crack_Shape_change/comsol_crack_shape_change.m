@@ -3,14 +3,14 @@
 %% 数据初始化
 clear;
 cd(fileparts(mfilename("fullpath")))
-jsonPath = "../../../../06_ProcessedData";
+jsonPath = "../../../06_ProcessedData";
 jsonFile = fullfile(jsonPath, "parameters.json");
 params = jsondecode(fileread(jsonFile));
 P = params.P;
 
-dataPathEllipse = '..\..\..\..\05_Data\SoftCrack\ellipse_data\distance';
-dataPathEllipseAligned= '..\..\..\..\05_Data\SoftCrack\ellipse_data_aligned\distance';
-dataPathNonellipse = '..\..\..\..\05_Data\SoftCrack\polygonal_data\distance';
+dataPathEllipse = '..\..\..\05_Data\SoftCrack\ellipse_data\distance';
+dataPathEllipseAligned= '..\..\..\05_Data\SoftCrack\ellipse_data_aligned\distance';
+dataPathNonellipse = '..\..\..\05_Data\SoftCrack\polygonal_data\distance';
 
 aaEllipse = zeros(40, 200, 43);
 for tab = 1:40  % 四十个表格

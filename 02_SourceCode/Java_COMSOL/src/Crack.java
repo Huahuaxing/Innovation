@@ -20,7 +20,7 @@ public class Crack {
 
     // 内部类：存储单个裂隙类型的数据
     public static class CrackData {
-        private String name;    
+        private String name;
         private double b0;
         private double c0;
         private int num;

@@ -1,4 +1,6 @@
 # 忽略所有输出数据
+03_InputData/
+04_COMSOL_output/
 05_Data/
 06_ProcessedData/
 07_Research/
