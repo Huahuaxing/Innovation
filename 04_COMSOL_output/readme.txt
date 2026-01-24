@@ -1,1 +1,0 @@
-comsol自动化建模过程中生成的裂隙上点的坐标、位置分别存入coordinates和position目录下，导出的位移数据文件存入finally目录，再手动移入05_Data目录下。
