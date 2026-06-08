@@ -1,7 +1,4 @@
-// import java.util.List;
-
-// 要生成不同组模型，只需要修改m和addCrackData中的参数
-
+package app;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -11,9 +8,11 @@ import com.comsol.model.*;
 import com.comsol.model.util.*;
 
 
-public class SoftCracks {
+public class SimulationRunner {
 
-     static int num_cycles = 5;         // 子模型个数
+    public int cycleNum = 5;                    // 子模型个数
+    public int typeNum = 2;
+    public String crackShape = "ellipse";
 
      public static Model run(int n){
 

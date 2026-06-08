@@ -1,20 +1,20 @@
 %% 数据初始化
 clear;
 cd(fileparts(mfilename("fullpath")))
-params = jsondecode(fileread('../../../../06_ProcessedData/parameters.json'));
+params = jsondecode(fileread('../../../06_ProcessedData/parameters.json'));
 P = params.P(:) / 1e6;  % 转换为MPa，列向量
 
 % 图像保存路径设置
-saveBaseDir = 'D:\Projects\02_Innovation\07_Research\01_Aperture_Radius\Figure\01_threshold_algorithm';
+saveBaseDir = '..\..\..\07_Research\01_Aperture_Radius\Figure\01_threshold_algorithm';
 saveDirContain    = fullfile(saveBaseDir, 'contain_ellipseAligned');
 saveDirNotContain = fullfile(saveBaseDir, 'not_contain_ellipseAligned');
 if ~exist(saveDirContain, 'dir');    mkdir(saveDirContain);    end
 if ~exist(saveDirNotContain, 'dir'); mkdir(saveDirNotContain); end
 
 % 读取数据
-ellipseData = load('D:\Projects\02_Innovation\06_ProcessedData\01_aperture_radius_record\Ellipse_Record.mat');
-ellipseAlignedData = load('D:\Projects\02_Innovation\06_ProcessedData\01_aperture_radius_record\EllipseAligned_Record.mat');
-nonellipseData = load('D:\Projects\02_Innovation\06_ProcessedData\01_aperture_radius_record\Nonellipse_Record.mat');
+ellipseData = load('..\..\..\06_ProcessedData\01_aperture_radius_record\Ellipse_Record.mat');
+ellipseAlignedData = load('..\..\..\06_ProcessedData\01_aperture_radius_record\EllipseAligned_Record.mat');
+nonellipseData = load('..\..\..\06_ProcessedData\01_aperture_radius_record\Nonellipse_Record.mat');
 
 apertureEllipse = squeeze(mean(mean(ellipseData.aperture_record,2),1));      % (200,6)
 radiusEllipse = squeeze(mean(mean(ellipseData.radius_record,2),1));          % (200,6)

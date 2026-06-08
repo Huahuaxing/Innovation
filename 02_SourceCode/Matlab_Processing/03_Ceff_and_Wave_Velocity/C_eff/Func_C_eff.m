@@ -14,18 +14,18 @@ C_eff = zeros(200, 5, 6, 6, 6); % 按实际需求和输入决定size
 for groupNum = 1:6
     for stressNum = 1:200
         for subNum = 1:5
-            Z_intermediate = zeros(6,6);                                % 中间计算矩阵
+            Z_intermediate = zeros(6,6);                                            % 中间计算矩阵
             for crackNum = 1:20
-                a1 = 1;                                             % 固定值
+                a1 = 1;                                                             % 固定值
                 a2 = radius_record(subNum, crackNum, stressNum, groupNum);
                 a3 = aperture_record(subNum, crackNum, stressNum, groupNum) / 2;
-                crackAspectRatio = a3 / a2;                             % 裂隙纵横比
-                angle = 0;                                              % 裂隙角度
-                S_mian = 20 * 20 * 1e-4;                                % 单元面积或体积，单位m^2
+                crackAspectRatio = a3 / a2;                                         % 裂隙纵横比
+                angle = 0;                                                          % 裂隙角度
+                S_mian = 20 * 20 * 1e-4;                                            % 单元面积或体积，单位m^2
                 
                 if dimention == 2
-                    c_density = n *(a2^2) / S_mian;                     % 裂隙密度
-                    p = n * pi * a2 * a3 / S_mian;                      % 裂隙孔隙率
+                    c_density = n *(a2^2) / S_mian;                                 % 裂隙密度
+                    p = n * pi * a2 * a3 / S_mian;                                  % 裂隙孔隙率
                 else % dimention==3
                     c_density = n *(a2^3) / S_mian;
                     p = 4 * pi * c_density * crackAspectRatio / 3.0;
@@ -47,5 +47,4 @@ for groupNum = 1:6
             C_eff(stressNum, subNum, :, :, groupNum) = inv(S);
         end
     end
-end
 end

@@ -5,12 +5,14 @@
 % =============================================
 clear; clc;
 %% 1. 数据初始化
-jsonText = fileread('D:\Projects\02_Innovation\parameters.json');
-prop = jsondecode(jsonText);
-P = prop.P(:) / 1e6; % 转换为MPa，列向量
+clear;
+cd(fileparts(mfilename("fullpath")))
 
-nonellipse_vp = readmatrix('D:\Projects\02_Innovation\06_ProcessedData\03_velocity\n_20_degree_0\vp\vp_nonellipse.csv');
-ellipse_vp = readmatrix('D:\Projects\02_Innovation\06_ProcessedData\03_velocity\n_20_degree_0\vp\vp_ellipse.csv');
+params = jsondecode(fileread('../../../../../06_ProcessedData/parameters.json'));
+P = params.P(:) / 1e6;  % MPa
+
+nonellipse_vp = readmatrix('../../../../../06_ProcessedData\03_velocity\n_20_degree_0\vp\vp_nonellipse.csv');
+ellipse_vp = readmatrix('../../../../../06_ProcessedData\03_velocity\n_20_degree_0\vp\vp_ellipse.csv');
 
 cycle = 6;
 %% 手动指定参数数组（按数组索引顺序，共6组）

@@ -5,13 +5,13 @@
 clear;
 %% 数据初始化
 cd(fileparts(mfilename("fullpath")));
-prop = jsondecode(fileread("../../../../../06_ProcessedData/parameters.json"));
+prop = jsondecode(fileread("../../../../06_ProcessedData/parameters.json"));
 P = prop.P;   % 应力数组
 
 groupNum = 6;
 
 % 加载椭圆模型波速数据，(200,6)
-vpEllipse = readmatrix('../../../../../06_ProcessedData/03_velocity/n_20_degree_0/vp/vp_ellipse.csv');
+vpEllipse = readmatrix('../../../../06_ProcessedData/03_velocity/n_20_degree_0/vp/vp_ellipse.csv');
 dvdpEllipse = zeros(200, 6);
 for g=1:groupNum
     dvdpEllipse(:, g) = gradient(vpEllipse(:,g), P);
@@ -29,7 +29,7 @@ for g = 1:groupNum
     interceptEllipse(g) = p(2);
 end
 % 椭圆对齐模型数据
-vpEllipseAligned = readmatrix('../../../../../06_ProcessedData/03_velocity/n_20_degree_0/vp/vp_ellipseAligned.csv');
+vpEllipseAligned = readmatrix('../../../../06_ProcessedData/03_velocity/n_20_degree_0/vp/vp_ellipseAligned.csv');
 indexArray = [[30,117]; [16,117]; [20,100]; [20,75]; [20,75]; [16,60]];
 slopeEllipseAligned = zeros(1, groupNum);
 interceptEllipseAligned = zeros(1, groupNum);
@@ -45,7 +45,7 @@ for g = 1:groupNum
     interceptEllipseAligned(g) = p(2);
 end
 % 非椭圆模型数据
-vpNonellipse = readmatrix('../../../../../06_ProcessedData/03_velocity/n_20_degree_0/vp/vp_nonellipse.csv');
+vpNonellipse = readmatrix('../../../../06_ProcessedData/03_velocity/n_20_degree_0/vp/vp_nonellipse.csv');
 dvdpNonellipse = zeros(200, 6);
 for g=1:groupNum
     dvdpNonellipse(:, g) = gradient(vpNonellipse(:,g), P);
