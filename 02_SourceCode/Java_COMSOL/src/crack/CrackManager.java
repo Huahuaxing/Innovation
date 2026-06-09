@@ -10,7 +10,6 @@ import config.PathConfig;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.nio.file.Files;
 import java.nio.file.Path;
 
    
@@ -26,6 +25,22 @@ public class CrackManager {
         this.pathConfig = config.getPathConfig();
         
     }
+
+    // 获取模型配置
+    public ModelConfig getModelConfig() {
+        return this.modelConfig;
+    }
+
+    // 获取裂隙数据列表
+    public List<CrackData> getCrackList() {
+        return this.crackList;
+    }
+
+    // 获取路径配置
+    public PathConfig getPathConfig() {
+        return this.pathConfig;
+    }
+
 
     // 获取裂隙数据列表
     public List<CrackData> getcrackList() {
@@ -53,7 +68,7 @@ public class CrackManager {
         return arList;
     }
 
-    // 生成裂隙中心坐标
+    // 生成一个子模型的裂隙中心坐标，(crackNum, 2)
     public List<double[]> crackPosition() {
         List<double[]> positionList = new ArrayList<>();
         List<double[]> arList = getARList();
@@ -108,9 +123,10 @@ public class CrackManager {
             for (int j = 0; j <= 20; j++) {
                 double standardX = -c0 + j * (2 * c0 / 20);
                 double ux = b0 * Math.pow(1 - Math.pow(standardX / c0, 2), 1.5);
-                double x = standardX + positionList.get(i)[0];
-                double y1 = ux + positionList.get(i)[1];
-                double y2 = -ux + positionList.get(i)[1];
+
+                double x = Math.round((standardX + positionList.get(i)[0]) * 1000000.0) / 1000000.0;
+                double y1 = Math.round((ux + positionList.get(i)[1]) * 1000000.0) / 1000000.0;
+                double y2 = Math.round((-ux + positionList.get(i)[1]) * 1000000.0) / 1000000.0;
 
                 if (j == 0 || j == 20) {
                     coordinates[j] = new double[]{x, y1};
@@ -119,21 +135,57 @@ public class CrackManager {
                     coordinates[40 - j] = new double[]{x, y2};
                 }
             }
+
             coordinateList.add(coordinates);
         }
+
         return coordinateList;
     }
 
     
-    // 从已有文件读取裂隙中心坐标
-    public List<double[]> readCrackPosition() {
+    // 读取单个子模型裂隙中心坐标
+    public List<double[]> readCrackPosition(int modelIndex) {
         List<double[]> positionList = new ArrayList<>();
-        for(int i = 1; i <= this.modelConfig.getSubModelNum(); i++) {
-            Path path = Path.of(this.pathConfig.getCrackPositionDir(), "position"+i+".txt");
+
+        Path path = Path.of(
+            this.pathConfig.getReadPositionDir(),
+            "position" + modelIndex + ".txt"
+        );
+
+        try (Scanner sc = new Scanner(path)) {
+            while (sc.hasNextLine()) {
+                String[] arr = sc.nextLine().split(",");
+                positionList.add(new double[]{
+                    Double.parseDouble(arr[0].trim()),
+                    Double.parseDouble(arr[1].trim())
+                });
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return positionList;
+    }
+
+
+    // 读取单个子模型非椭圆裂隙边缘坐标
+    public List<double[][]> readPolCoordinate(int modelIndex) {
+        List<double[][]> coordinateList = new ArrayList<>();
+
+        for (int j = 1; j <= this.modelConfig.getCrackNum(); j++) {
+
+            List<double[]> crack = new ArrayList<>();
+
+            Path path = Path.of(
+                this.pathConfig.getReadCoorDir(),
+                "data_coordinates_" + modelIndex,
+                "coordinates" + j + ".txt"
+            );
+
             try (Scanner sc = new Scanner(path)) {
                 while (sc.hasNextLine()) {
                     String[] arr = sc.nextLine().split(",");
-                    positionList.add(new double[]{
+                    crack.add(new double[]{
                         Double.parseDouble(arr[0].trim()),
                         Double.parseDouble(arr[1].trim())
                     });
@@ -141,83 +193,66 @@ public class CrackManager {
             } catch (Exception e) {
                 e.printStackTrace();
             }
-        }     
-        return positionList;
-    }
 
-
-    // 从已有文件读取非椭圆裂隙边缘坐标，(crackNum, 40, 2)
-    public List<double[][]> readPolCoordinate() {
-        List<double[][]> coordinateList = new ArrayList<>();
-        for (int i = 1; i <= this.modelConfig.getSubModelNum(); i++) {
-            for (int j = 1; j <= 20; j++) {
-                List<double[]> crack = new ArrayList<>();
-                Path path = Path.of(this.pathConfig.getPolCrackCoorDir(), "data_coordinates_"+i+".txt", "coordinates"+j+".txt");
-                try (Scanner sc = new Scanner(path)) {
-                    while (sc.hasNextLine()) {
-                        String[] arr = sc.nextLine().split(",");
-                        crack.add(new double[]{
-                                Double.parseDouble(arr[0].trim()),
-                                Double.parseDouble(arr[1].trim())
-                        });
-                    }
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
             coordinateList.add(crack.toArray(new double[0][0]));
-            }
         }
+
         return coordinateList;
     }
 
 
-    // 保存裂隙中心坐标
-    public void saveCrackPosition(List<double[]> positionList, String folderPath) {
-        File folder = new File(folderPath);
+    // 保存裂隙中心坐标（单子模型）
+    public void saveCrackPosition(List<double[]> positionList, int modelIndex) {
+
+        Path filePath = Path.of(
+            this.pathConfig.getSavePositionDir(),
+            "position" + modelIndex + ".txt"
+        );
+
+        File file = filePath.toFile();
+        File parent = file.getParentFile();
+
+        if (parent != null && !parent.exists()) {
+            parent.mkdirs();
+        }
+
+        try (FileWriter fw = new FileWriter(file)) {
+
+            for (double[] p : positionList) {
+                fw.write(p[0] + ", " + p[1] + "\n");
+            }
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    // 保存非椭圆裂隙边缘坐标（单子模型）
+    public void savePolCoordinate(List<double[][]> coordinateList, int modelIndex) {
+
+        Path folderPath = Path.of(
+            this.pathConfig.getSaveCoorDir(),
+            "data_coordinates_" + modelIndex
+        );
+
+        File folder = folderPath.toFile();
+
         if (!folder.exists()) {
             folder.mkdirs();
         }
 
-        for (int i = 0; i < positionList.size(); i++) {
+        for (int i = 0; i < coordinateList.size(); i++) {
 
-            Path path = Path.of(
-                folderPath,
-                "position" + (i + 1) + ".txt"
-            );
+            Path filePath = folderPath.resolve("coordinates" + (i + 1) + ".txt");
 
-            try (FileWriter fw = new FileWriter(path.toFile())) {
+            try (FileWriter fw = new FileWriter(filePath.toFile())) {
 
-                double[] p = positionList.get(i);
-                fw.write(p[0] + ", " + p[1] + "\n");
+                for (double[] point : coordinateList.get(i)) {
+                    fw.write(point[0] + ", " + point[1] + "\n");
+                }
 
             } catch (IOException e) {
                 e.printStackTrace();
-            }
-        }
-    }
-
-    // 保存非椭圆裂隙边缘坐标
-    public void savePolCoordinate(List<double[][]> coordinateList, String folderPath) {
-        File folder = new File(folderPath);
-        if (!folder.exists()) folder.mkdirs();
-
-        for (int i = 1; i <= this.modelConfig.getSubModelNum(); i++) {
-            Path modelDir = Path.of(folderPath, "data_coordinates_" + i + ".txt");
-            try { Files.createDirectories(modelDir); } catch (IOException e) { e.printStackTrace(); continue; }
-
-            for (int j = 1; j <= this.modelConfig.getCrackNum(); j++) {
-                int index = (i - 1) * this.modelConfig.getCrackNum() + (j - 1);
-                if (index >= coordinateList.size()) return;
-
-                Path filePath = modelDir.resolve("coordinates" + j + ".txt");
-
-                try (FileWriter fw = new FileWriter(filePath.toFile())) {
-                    for (double[] point : coordinateList.get(index)) {
-                        fw.write(point[0] + ", " + point[1] + "\n");
-                    }
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
             }
         }
     }

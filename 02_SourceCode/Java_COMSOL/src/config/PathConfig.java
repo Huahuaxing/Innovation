@@ -1,12 +1,12 @@
 package config;
+
 public class PathConfig {
 
     private String projectRootDir;
-
-    private String crackPositionDir;
-
-    private String polCrackCoorDir;
-
+    private String readPositionDir;
+    private String readCoorDir;
+    private String savePositionDir;
+    private String saveCoorDir;
     private String resultDir;
 
     public PathConfig() {}
@@ -19,20 +19,36 @@ public class PathConfig {
         this.projectRootDir = projectRootDir;
     }
 
-    public String getCrackPositionDir() {
-        return crackPositionDir;
+    public String getReadPositionDir() {
+        return readPositionDir;
     }
 
-    public void setCrackPositionDir(String crackPositionDir) {
-        this.crackPositionDir = crackPositionDir;
+    public void setReadPositionDir(String readPositionDir) {
+        this.readPositionDir = readPositionDir;
     }
 
-    public String getPolCrackCoorDir() {
-        return polCrackCoorDir;
+    public String getReadCoorDir() {
+        return readCoorDir;
     }
 
-    public void setPolCrackCoorDir(String polCrackCoorDir) {
-        this.polCrackCoorDir = polCrackCoorDir;
+    public void setReadCoorDir(String readCoorDir) {
+        this.readCoorDir = readCoorDir;
+    }
+
+    public String getSavePositionDir() {
+        return savePositionDir;
+    }
+
+    public void setSavePositionDir(String savePositionDir) {
+        this.savePositionDir = savePositionDir;
+    }
+
+    public String getSaveCoorDir() {
+        return saveCoorDir;
+    }
+
+    public void setSaveCoorDir(String saveCoorDir) {
+        this.saveCoorDir = saveCoorDir;
     }
 
     public String getResultDir() {
