@@ -16,12 +16,10 @@ import java.nio.file.Path;
 public class CrackManager {
 
     private final ModelConfig modelConfig;
-    private final List<CrackData> crackList;
     private final PathConfig pathConfig;
 
     public CrackManager(Config config) {
         this.modelConfig = config.getModelConfig();
-        this.crackList = config.getCrackList();
         this.pathConfig = config.getPathConfig();
         
     }
@@ -31,26 +29,20 @@ public class CrackManager {
         return this.modelConfig;
     }
 
-    // 获取裂隙数据列表
-    public List<CrackData> getCrackList() {
-        return this.crackList;
-    }
-
     // 获取路径配置
     public PathConfig getPathConfig() {
         return this.pathConfig;
     }
 
-
     // 获取裂隙数据列表
-    public List<CrackData> getcrackList() {
-        return this.crackList;
+    public List<CrackData> getCrackList() {
+        return this.modelConfig.getCrackList();
     }
 
     // 获取裂隙总数
     public int getCracksNum(){
         int num = 0;
-        for (CrackData crack : crackList) {
+        for (CrackData crack : this.modelConfig.getCrackList()) {
             num += crack.getNum();
         }
         return num;
@@ -60,7 +52,7 @@ public class CrackManager {
     public List<double[]> getARList() {
         List<double[]> arList = new ArrayList<>();
         
-        for(CrackData crack : crackList) {
+        for(CrackData crack : this.modelConfig.getCrackList()) {
             for(int i = 1; i <= crack.getNum(); i++) {
                 arList.add(new double[]{crack.getB0(), crack.getC0()});
             }
