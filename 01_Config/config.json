@@ -1,0 +1,32 @@
+{
+    "modelConfig": {
+        "squareSize": 0.2,
+        "groupNum": 6,
+        "subModelNum": 5,
+        "crackShape" : "ellipse",
+        "crackNum": 20
+    },
+    
+    "crackList":[
+        {
+            "name": "AR1",
+            "b0": 0.0001,
+            "c0": 0.018,
+            "num": 16
+        },{
+            "name": "AR2",
+            "b0": 0.00005,
+            "c0": 0.018,
+            "num": 4
+        }
+    ],
+
+    "pathConfig": {
+        "projectRootDir": "D:\\02_Project\\Innovation",
+        "readPositionDir": "D:\\02_Project\\Innovation\\05_Data\\SoftCrack\\source_model\\ellipse_source\\第1组_20AR1",
+        "readCoorDir": "D:\\02_Project\\Innovation\\05_Data\\SoftCrack\\source_model\\nonellipse_source\\第1组_20AR1",
+        "savePositionDir": "D:\\02_Project\\Innovation\\a",
+        "saveCoorDir": "D:\\02_Project\\Innovation\\b",
+        "resultDir": "D:\\02_Project\\Innovation\\04_COMSOL_output\\Finally"
+    }
+}
