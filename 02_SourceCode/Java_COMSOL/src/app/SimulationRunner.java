@@ -3,6 +3,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 import com.comsol.model.*;
@@ -23,6 +24,9 @@ public class SimulationRunner {
           String crackShape = crackManager.getModelConfig().getCrackShape();          // 裂隙类型，椭圆或多边形
           List<CrackData> crackList = crackManager.getCrackList();
           List<double[]> arList = crackManager.getARList();
+          List<double[]> positionList;
+          List<double[][]> coordinateList;
+
 
           Model model = ModelUtil.create("Model");
           // model.modelPath("E:\\OneDrive\\Project\\Innovation");
@@ -49,71 +53,57 @@ public class SimulationRunner {
           model.component("comp1").geom("geom1").create("sq1", "Square");
           model.component("comp1").geom("geom1").feature("sq1").set("size", 0.2);
                   
-
-          // 创建裂隙，根据裂隙类型创建不同的几何，并进行布尔运算
-          double[][] positions = new double[crackNum][2];
-          if(crackShape.equals("ellipse")){
-               // 从文件中读取裂隙坐标，使椭圆裂隙坐标和多边形裂隙相同
-               positions = new double[crackNum][2];
-               try (BufferedReader reader = new BufferedReader(new FileReader("E:\\OneDrive\\Project\\Innovation\\Data\\" + groupNum + "\\position" + n + ".txt"))) {
-                    String line;
-                    for(int i = 0; i < crackNum; i++){
-                         line = reader.readLine();
-                         String[] coordinates = line.split(",");
-                         positions[i][0] = Double.parseDouble(coordinates[0].trim());
-                         positions[i][1] = Double.parseDouble(coordinates[1].trim());
-                    }
-               } catch (NumberFormatException | IOException e) {
-                    System.err.println("Error reading position file for groupNum " + groupNum + ", n=" + n + ": " + e.getMessage());
-                    e.printStackTrace();
-               }
-               for(int i = 1; i <= crackNum; i++){
-                    model.component("comp1").geom("geom1").create("e" + i, "Ellipse");
-                    model.component("comp1").geom("geom1").feature("e" + i).set("pos", positions[i-1]);
-                    model.component("comp1").geom("geom1").feature("e" + i).set("rot", 90);
-                    model.component("comp1").geom("geom1").feature("e" + i).set("semiaxes", new String[]{"b" + i, "c" + i});
-                    model.component("comp1").geom("geom1").feature("e" + i).set("selresult", true);
-                    model.component("comp1").geom("geom1").feature("e" + i).set("selresultshow", "bnd");  
-
-                    if(i == 1){
-                         model.component("comp1").geom("geom1").create("dif" + i, "Difference");
-                         model.component("comp1").geom("geom1").feature("dif" + i).selection("input").set("sq1");
-                         model.component("comp1").geom("geom1").feature("dif" + i).selection("input2").set("e" + i);
-                    }else{
-                         model.component("comp1").geom("geom1").create("dif" + i, "Difference");
-                         model.component("comp1").geom("geom1").feature("dif" + i).selection("input").set("dif" + (i - 1));
-                         model.component("comp1").geom("geom1").feature("dif" + i).selection("input2").set("e" + i);
-                    }
-               }
-          }else if(crackShape.equals("polygon")){
-               positions = crack.cracks_position(n);
-
-               crack.cracks_coordinates(positions, n);
-
-               for(int i = 1; i <= crackNum; i++){
-                    model.component("comp1").geom("geom1").create("pol" + i, "Polygon");
-                    model.component("comp1").geom("geom1").feature("pol" + i).set("source", "file");
-                    model.component("comp1").geom("geom1").feature("pol" + i).set("filename", "E:\\OneDrive\\Project\\Innovation\\Data\\Coordinates\\data_coordinates_" + n + "\\coordinates" + i + ".txt");
-                    model.component("comp1").geom("geom1").feature("pol" + i).set("selresult", true);
-                    model.component("comp1").geom("geom1").feature("pol" + i).set("selresultshow", "bnd");    
-                    if(i == 1){
-                         model.component("comp1").geom("geom1").create("dif" + i, "Difference");
-                         model.component("comp1").geom("geom1").feature("dif" + i).selection("input").set("sq1");
-                         model.component("comp1").geom("geom1").feature("dif" + i).selection("input2").set("pol" + i);
-                    }else{
-                         model.component("comp1").geom("geom1").create("dif" + i, "Difference");
-                         model.component("comp1").geom("geom1").feature("dif" + i).selection("input").set("dif" + (i - 1));
-                         model.component("comp1").geom("geom1").feature("dif" + i).selection("input2").set("pol" + i);
-                    }
-               }
+          // 判断读取裂隙坐标还是程序生成裂隙坐标
+          if ("read".equalsIgnoreCase(crackManager.getModelConfig().getCrackSource())) {
+               positionList = crackManager.readCrackPosition(n);
+          } else {
+               positionList = crackManager.crackPosition();
           }
-          
+
+          // 根据裂隙类型创建几何
+          if ("ellipse".equalsIgnoreCase(crackShape)) {
+          for (int i = 1; i <= crackNum; i++) {
+               model.component("comp1").geom("geom1").create("e" + i, "Ellipse");
+               model.component("comp1").geom("geom1").feature("e" + i).set("pos", positionList.get(i - 1));
+               model.component("comp1").geom("geom1").feature("e" + i).set("rot", 90);
+               model.component("comp1").geom("geom1").feature("e" + i).set("semiaxes", new String[]{"b" + i, "c" + i});
+               model.component("comp1").geom("geom1").feature("e" + i).set("selresult", true);
+               model.component("comp1").geom("geom1").feature("e" + i).set("selresultshow", "bnd");
+               String inputFeature = (i == 1) ? "sq1" : "dif" + (i - 1);
+               model.component("comp1").geom("geom1").create("dif" + i, "Difference");
+               model.component("comp1").geom("geom1").feature("dif" + i).selection("input").set(inputFeature);
+               model.component("comp1").geom("geom1").feature("dif" + i).selection("input2").set("e" + i);
+          }
+          } else if ("polygon".equalsIgnoreCase(crackShape)) {
+          if ("read".equalsIgnoreCase(crackManager.getModelConfig().getCrackSource())) {
+               coordinateList = crackManager.readPolCoordinate(n);
+          } else {
+               coordinateList = crackManager.polCrackCoordinate(positionList);
+               crackManager.savePolCoordinate(coordinateList, n);
+          }
+          for (int i = 1; i <= crackNum; i++) {
+               model.component("comp1").geom("geom1").create("pol" + i, "Polygon");
+               model.component("comp1").geom("geom1").feature("pol" + i).set("source", "file");
+               model.component("comp1").geom("geom1").feature("pol" + i).set(
+                    "filename",
+                    crackManager.getPathConfig().getSaveCoorDir()
+                         + "\\data_coordinates_" + n
+                         + "\\coordinates" + i + ".txt"
+               );
+               model.component("comp1").geom("geom1").feature("pol" + i).set("selresult", true);
+               model.component("comp1").geom("geom1").feature("pol" + i).set("selresultshow", "bnd");
+               String inputFeature = (i == 1) ? "sq1" : "dif" + (i - 1);
+               model.component("comp1").geom("geom1").create("dif" + i, "Difference");
+               model.component("comp1").geom("geom1").feature("dif" + i).selection("input").set(inputFeature);
+               model.component("comp1").geom("geom1").feature("dif" + i).selection("input2").set("pol" + i);
+          }
+          }
           model.component("comp1").geom("geom1").run();
           
           // 创建变量var1，var2
           model.component("comp1").variable().create("var1");
           model.component("comp1").variable().create("var2");
-          for(int i = 1; i <= crack.getCrackNum(); i++){
+          for(int i = 1; i <= crackNum; i++){
                model.component("comp1").variable("var1").set(String.format("area%d", i), String.format("intop%d(-x*solid.nx)", i));
                model.component("comp1").variable("var2").set(String.format("distance%d", i), String.format("aveop%d(y)-aveop%d(y)", 2*i-1, 2*i));
           }
