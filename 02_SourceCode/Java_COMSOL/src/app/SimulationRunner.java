@@ -53,50 +53,51 @@ public class SimulationRunner {
           model.component("comp1").geom("geom1").create("sq1", "Square");
           model.component("comp1").geom("geom1").feature("sq1").set("size", 0.2);
                   
-          // 判断读取裂隙坐标还是程序生成裂隙坐标
-          if ("read".equalsIgnoreCase(crackManager.getModelConfig().getCrackSource())) {
-               positionList = crackManager.readCrackPosition(n);
-          } else {
-               positionList = crackManager.crackPosition();
-          }
-
           // 根据裂隙类型创建几何
           if ("ellipse".equalsIgnoreCase(crackShape)) {
-          for (int i = 1; i <= crackNum; i++) {
-               model.component("comp1").geom("geom1").create("e" + i, "Ellipse");
-               model.component("comp1").geom("geom1").feature("e" + i).set("pos", positionList.get(i - 1));
-               model.component("comp1").geom("geom1").feature("e" + i).set("rot", 90);
-               model.component("comp1").geom("geom1").feature("e" + i).set("semiaxes", new String[]{"b" + i, "c" + i});
-               model.component("comp1").geom("geom1").feature("e" + i).set("selresult", true);
-               model.component("comp1").geom("geom1").feature("e" + i).set("selresultshow", "bnd");
-               String inputFeature = (i == 1) ? "sq1" : "dif" + (i - 1);
-               model.component("comp1").geom("geom1").create("dif" + i, "Difference");
-               model.component("comp1").geom("geom1").feature("dif" + i).selection("input").set(inputFeature);
-               model.component("comp1").geom("geom1").feature("dif" + i).selection("input2").set("e" + i);
-          }
+               // 椭圆裂隙只需要中心坐标
+               if ("read".equalsIgnoreCase(crackManager.getModelConfig().getCrackSource())) {
+                    positionList = crackManager.readCrackPosition(n);
+               } else {
+                    positionList = crackManager.crackPosition();
+                    crackManager.saveCrackPosition(positionList, n);
+               }
+               for (int i = 1; i <= crackNum; i++) {
+                    model.component("comp1").geom("geom1").create("e" + i, "Ellipse");
+                    model.component("comp1").geom("geom1").feature("e" + i).set("pos", positionList.get(i - 1));
+                    model.component("comp1").geom("geom1").feature("e" + i).set("rot", 90);
+                    model.component("comp1").geom("geom1").feature("e" + i).set("semiaxes", new String[]{"b" + i, "c" + i});
+                    model.component("comp1").geom("geom1").feature("e" + i).set("selresult", true);
+                    model.component("comp1").geom("geom1").feature("e" + i).set("selresultshow", "bnd");
+                    String inputFeature = (i == 1) ? "sq1" : "dif" + (i - 1);
+                    model.component("comp1").geom("geom1").create("dif" + i, "Difference");
+                    model.component("comp1").geom("geom1").feature("dif" + i).selection("input").set(inputFeature);
+                    model.component("comp1").geom("geom1").feature("dif" + i).selection("input2").set("e" + i);
+               }
           } else if ("polygon".equalsIgnoreCase(crackShape)) {
-          if ("read".equalsIgnoreCase(crackManager.getModelConfig().getCrackSource())) {
-               coordinateList = crackManager.readPolCoordinate(n);
-          } else {
-               coordinateList = crackManager.polCrackCoordinate(positionList);
-               crackManager.savePolCoordinate(coordinateList, n);
-          }
-          for (int i = 1; i <= crackNum; i++) {
-               model.component("comp1").geom("geom1").create("pol" + i, "Polygon");
-               model.component("comp1").geom("geom1").feature("pol" + i).set("source", "file");
-               model.component("comp1").geom("geom1").feature("pol" + i).set(
-                    "filename",
-                    crackManager.getPathConfig().getSaveCoorDir()
-                         + "\\data_coordinates_" + n
-                         + "\\coordinates" + i + ".txt"
-               );
-               model.component("comp1").geom("geom1").feature("pol" + i).set("selresult", true);
-               model.component("comp1").geom("geom1").feature("pol" + i).set("selresultshow", "bnd");
-               String inputFeature = (i == 1) ? "sq1" : "dif" + (i - 1);
-               model.component("comp1").geom("geom1").create("dif" + i, "Difference");
-               model.component("comp1").geom("geom1").feature("dif" + i).selection("input").set(inputFeature);
-               model.component("comp1").geom("geom1").feature("dif" + i).selection("input2").set("pol" + i);
-          }
+               if ("read".equalsIgnoreCase(crackManager.getModelConfig().getCrackSource())) {
+                    coordinateList = crackManager.readPolCoordinate(n);
+               } else {
+                    positionList = crackManager.crackPosition();
+                    crackManager.saveCrackPosition(positionList, n);
+                    coordinateList = crackManager.polCrackCoordinate(positionList);
+                    crackManager.savePolCoordinate(coordinateList, n);
+               }
+               String coordinateDir =
+                    "read".equalsIgnoreCase(crackManager.getModelConfig().getCrackSource())
+                    ? crackManager.getPathConfig().getReadCoorDir()
+                    : crackManager.getPathConfig().getSaveCoorDir();
+               for (int i = 1; i <= crackNum; i++) {
+                    model.component("comp1").geom("geom1").create("pol" + i, "Polygon");
+                    model.component("comp1").geom("geom1").feature("pol" + i).set("source", "file");
+                    model.component("comp1").geom("geom1").feature("pol" + i).set("filename", coordinateDir+ "\\data_coordinates_" + n + "\\coordinates" + i + ".txt");
+                    model.component("comp1").geom("geom1").feature("pol" + i).set("selresult", true);
+                    model.component("comp1").geom("geom1").feature("pol" + i).set("selresultshow", "bnd");
+                    String inputFeature = (i == 1) ? "sq1" : "dif" + (i - 1);
+                    model.component("comp1").geom("geom1").create("dif" + i, "Difference");
+                    model.component("comp1").geom("geom1").feature("dif" + i).selection("input").set(inputFeature);
+                    model.component("comp1").geom("geom1").feature("dif" + i).selection("input2").set("pol" + i);
+               }
           }
           model.component("comp1").geom("geom1").run();
           
