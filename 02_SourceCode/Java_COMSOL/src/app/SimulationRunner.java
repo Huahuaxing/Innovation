@@ -74,7 +74,8 @@ public class SimulationRunner {
                     model.component("comp1").geom("geom1").feature("dif" + i).selection("input").set(inputFeature);
                     model.component("comp1").geom("geom1").feature("dif" + i).selection("input2").set("e" + i);
                }
-          } else if ("polygon".equalsIgnoreCase(crackShape)) {
+          }      
+          if ("polygon".equalsIgnoreCase(crackShape)) {
                if ("read".equalsIgnoreCase(crackManager.getModelConfig().getCrackSource())) {
                     coordinateList = crackManager.readPolCoordinate(n);
                } else {
@@ -238,8 +239,6 @@ public class SimulationRunner {
           
           model.sol("sol1").runAll();
 
-          
-
           // // 创建2D绘图
           // model.result().create("pg1", "PlotGroupNum2D");
           // model.result("pg1").label("\u5e94\u529b (solid)");
@@ -256,26 +255,25 @@ public class SimulationRunner {
           // model.result("pg1").feature("surf1").feature("def").set("scaleactive", true);
           
           // 2D points
-          double leftX = 0;
-          double rightX = 0;
-          double interval = 0;    // spacing
-          double pointy = 0;      // y coordinate
-          for (int i = 1; i <= 40; i++) {
-               leftX = positions[(i - 1) / 2][0] - arList[(i - 1) / 2][1];
-               rightX = positions[(i - 1) / 2][0] + arList[(i - 1) / 2][1];
-               interval = (rightX - leftX)/20;
-               pointy = positions[(i - 1) / 2][1];
-               
-               model.result().dataset().create("cpt" + i, "CutPoint2D");
-               model.result().dataset("cpt" + i).set("pointx", "range("+leftX+","+interval+","+rightX+")");
-               if(i % 2 != 0) {
-                    pointy = pointy + 0.0001;
-               }else {
-                    pointy = pointy - 0.0001;
+          for (int i = 1; i <= 2 * crackNum; i++) {
+               int crackIndex = (i - 1) / 2;
+               double centerX = positionList.get(crackIndex)[0];
+               double centerY = positionList.get(crackIndex)[1];
+               double c0 = arList.get(crackIndex)[1];
+               double leftX = centerX - c0;
+               double rightX = centerX + c0;
+               double interval = (rightX - leftX) / 20.0;
+               double pointY = centerY;
+               if (i % 2 != 0) {
+                    pointY += 0.0001;
+               } else {
+                    pointY -= 0.0001;
                }
-               model.result().dataset("cpt" + i).set("pointy", pointy);
+               model.result().dataset().create("cpt" + i, "CutPoint2D");
+               model.result().dataset("cpt" + i).set("pointx", "range(" + leftX + "," + interval + "," + rightX + ")");
+               model.result().dataset("cpt" + i).set("pointy", pointY);
                model.result().dataset("cpt" + i).set("snapping", "boundary");
-               model.result().dataset("cpt" + i).set("pointvar", "cpt"+ i + "n");
+               model.result().dataset("cpt" + i).set("pointvar", "cpt" + i + "n");
           }
 
           // globle compute
@@ -306,13 +304,13 @@ public class SimulationRunner {
                .set("const", new String[][]{{"solid.refpntx", "0", "\u529b\u77e9\u8ba1\u7b97\u53c2\u8003\u70b9\uff0cx \u5750\u6807"}, {"solid.refpnty", "0", "\u529b\u77e9\u8ba1\u7b97\u53c2\u8003\u70b9\uff0cy \u5750\u6807"}, {"solid.refpntz", "0", "\u529b\u77e9\u8ba1\u7b97\u53c2\u8003\u70b9\uff0cz \u5750\u6807"}});
           
           // table and comments
-          for(int i = 1; i <= 40; i++) {
+          for(int i = 1; i <= 2 * crackNum; i++) {
                model.result().table().create("tbl" + i, "Table");
                model.result().table("tbl" + i).comments("\u70b9\\u8ba1\\u7b97 " + i);
                }
 
           // point compute
-          for(int i = 1; i <= 40; i++) {
+          for(int i = 1; i <= 2 * crackNum; i++) {
                model.result().numerical().create("pev" + i, "EvalPoint");
                model.result().numerical("pev" + i).set("data", "cpt" + i);
                model.result().numerical("pev" + i).set("table", "tbl" + i);
@@ -343,7 +341,7 @@ public class SimulationRunner {
                file.mkdirs();
           }
 
-          for(int i = 1; i <= 40; i++) {
+          for(int i = 1; i <= 2 * crackNum; i++) {
                model.result().export().create("tbl" + i , "Table");
                model.result().export("tbl" + i).set("table", "tbl" + i);
                model.result().export("tbl" + i)
@@ -380,7 +378,7 @@ public class SimulationRunner {
           model.result().numerical().remove("gev1");
           model.result().numerical().remove("gev2");
           model.result().numerical().remove("av1");
-          for(int i = 1; i <= 40; i++){
+          for(int i = 1; i <= 2 * crackNum; i++){
                model.result().dataset().remove("cpt" + i);
                model.result().numerical().remove("pev" + i);
                model.result().table().remove("tbl" + i);
