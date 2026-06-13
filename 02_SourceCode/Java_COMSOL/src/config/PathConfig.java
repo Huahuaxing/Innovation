@@ -7,7 +7,7 @@ public class PathConfig {
     private String readCoorDir;
     private String savePositionDir;
     private String saveCoorDir;
-    private String resultDir;
+    private String exportDir;
 
     public String getProjectRootDir() { return projectRootDir; }
     public void setProjectRootDir(String projectRootDir) { this.projectRootDir = projectRootDir; }
@@ -24,6 +24,6 @@ public class PathConfig {
     public String getSaveCoorDir() { return saveCoorDir; }
     public void setSaveCoorDir(String saveCoorDir) { this.saveCoorDir = saveCoorDir; }
 
-    public String getResultDir() { return resultDir; }
-    public void setResultDir(String resultDir) { this.resultDir = resultDir; }
+    public String getExportDir() { return exportDir; }
+    public void setExportDir(String exportDir) { this.exportDir = exportDir; }
 }

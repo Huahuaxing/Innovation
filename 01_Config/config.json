@@ -28,6 +28,6 @@
         "readCoorDir": "D:\\02_Project\\Innovation\\05_Data\\SoftCrack\\source_model\\nonellipse_source\\第1组_20AR1",
         "savePositionDir": "D:\\02_Project\\Innovation\\a",
         "saveCoorDir": "D:\\02_Project\\Innovation\\b",
-        "resultDir": "D:\\02_Project\\Innovation\\04_COMSOL_output\\Finally"
+        "exportDir": "D:\\02_Project\\Innovation\\04_COMSOL_output\\Finally"
     }
 }

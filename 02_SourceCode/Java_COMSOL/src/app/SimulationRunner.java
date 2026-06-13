@@ -109,9 +109,8 @@ public class SimulationRunner {
                model.component("comp1").variable("var1").set(String.format("area%d", i), String.format("intop%d(-x*solid.nx)", i));
                model.component("comp1").variable("var2").set(String.format("distance%d", i), String.format("aveop%d(y)-aveop%d(y)", 2*i-1, 2*i));
           }
-
           // 获取裂隙边界序号,奇数取裂隙上面，偶数取下面
-          int edgeNum = 0;
+          int edgeNum = 0; 
           if(crackShape.equals("ellipse")){
                edgeNum = 4;
           }else if(crackShape.equals("polygon")){
@@ -134,14 +133,12 @@ public class SimulationRunner {
                     model.component("comp1").cpl().create("intop" + i, "Integration");
                     model.component("comp1").cpl("intop" + i).selection().geom("geom1", 1);
                     model.component("comp1").cpl("intop" + i).selection().set(polEdges[i-1]);
-                    
                     model.component("comp1").cpl().create("aveop" + (2*i-1), "Average");
                     model.component("comp1").cpl().create("aveop" + (2*i), "Average");
                     model.component("comp1").cpl("aveop" + (2*i-1)).selection().geom("geom1", 1);
                     model.component("comp1").cpl("aveop" + (2*i)).selection().geom("geom1", 1);
                     model.component("comp1").cpl("aveop" + (2*i-1)).selection().set(polEdges[i-1][1], polEdges[i-1][3]);
                     model.component("comp1").cpl("aveop" + (2*i)).selection().set(polEdges[i-1][0], polEdges[i-1][2]);
-
                     model.component("comp1").pair().create("p" + (2*i-1), "Contact");
                     model.component("comp1").pair().create("p" + (2*i), "Contact");
                     model.component("comp1").pair("p" + (2*i-1)).source().set(polEdges[i-1][0]);
@@ -150,19 +147,18 @@ public class SimulationRunner {
                     model.component("comp1").pair("p" + (2*i)).destination().set(polEdges[i-1][3]);
 
                }
-          }else if(crackShape.equals("polygon")){
+          }
+          if(crackShape.equals("polygon")){
                for(int i = 1; i <= crackNum; i++){
                     model.component("comp1").cpl().create("intop" + i, "Integration");
                     model.component("comp1").cpl("intop" + i).selection().geom("geom1", 1);
                     model.component("comp1").cpl("intop" + i).selection().set(polEdges[i-1]);
-
                     model.component("comp1").cpl().create("aveop" + (2*i-1), "Average");
                     model.component("comp1").cpl().create("aveop" + (2*i), "Average");
                     model.component("comp1").cpl("aveop" + (2*i-1)).selection().geom("geom1", 1);
                     model.component("comp1").cpl("aveop" + (2*i)).selection().geom("geom1", 1);
                     model.component("comp1").cpl("aveop" + (2*i-1)).selection().set(polEdges[i-1][1], polEdges[i-1][3], polEdges[i-1][5], polEdges[i-1][7], polEdges[i-1][9], polEdges[i-1][11], polEdges[i-1][13], polEdges[i-1][15], polEdges[i-1][17], polEdges[i-1][19], polEdges[i-1][21], polEdges[i-1][23], polEdges[i-1][25], polEdges[i-1][27], polEdges[i-1][29], polEdges[i-1][31], polEdges[i-1][33], polEdges[i-1][35], polEdges[i-1][37], polEdges[i-1][39]);
                     model.component("comp1").cpl("aveop" + (2*i)).selection().set(polEdges[i-1][0], polEdges[i-1][2], polEdges[i-1][4], polEdges[i-1][6], polEdges[i-1][8], polEdges[i-1][10], polEdges[i-1][12], polEdges[i-1][14], polEdges[i-1][16], polEdges[i-1][18], polEdges[i-1][20], polEdges[i-1][22], polEdges[i-1][24], polEdges[i-1][26], polEdges[i-1][28], polEdges[i-1][30], polEdges[i-1][32], polEdges[i-1][34], polEdges[i-1][36], polEdges[i-1][38]);
-                    
                     model.component("comp1").pair().create("p" + (2*i-1), "Contact");
                     model.component("comp1").pair().create("p" + (2*i), "Contact");
                     model.component("comp1").pair("p" + (2*i-1)).source().set(polEdges[i-1][0], polEdges[i-1][2], polEdges[i-1][4], polEdges[i-1][6], polEdges[i-1][8], polEdges[i-1][10], polEdges[i-1][12], polEdges[i-1][14], polEdges[i-1][16], polEdges[i-1][18]);
@@ -177,9 +173,10 @@ public class SimulationRunner {
           model.component("comp1").physics("solid").create("bndl1", "BoundaryLoad", 1);
           model.component("comp1").physics("solid").feature("bndl1").selection().set(3);
           model.component("comp1").physics("solid").create("roll1", "Roller", 1);
-          if(crackShape.equals("ellipse")) {
+          if (crackShape.equals("ellipse")) {
                model.component("comp1").physics("solid").feature("roll1").selection().set(2, 4);
-          } else {
+          }
+          if(crackShape.equals("polygon")) {
                model.component("comp1").physics("solid").feature("roll1").selection().set(2, 804);
           }
           model.component("comp1").physics("solid").prop("AdvancedSettings").set("GroupNumPhysOdesRd", false);
@@ -192,9 +189,8 @@ public class SimulationRunner {
           model.component("comp1").physics("solid").feature("lemm1").set("rho", "2.02e3");
           model.component("comp1").physics("solid").feature("bndl1").set("LoadType", "FollowerPressure");
           model.component("comp1").physics("solid").feature("bndl1").set("FollowerPressure", "p_in");
-          model.component("comp1").physics("solid").feature("bndl1")
-               .set("weight", "(sqrt((solid.bndl1.x2^2)+(solid.bndl1.x3^2)))<=solid.bndl1.lc");
-     
+          model.component("comp1").physics("solid").feature("bndl1").set("weight", "(sqrt((solid.bndl1.x2^2)+(solid.bndl1.x3^2)))<=solid.bndl1.lc");
+
           model.component("comp1").view("view1").axis().set("xmin", -0.08348365128040314);
           model.component("comp1").view("view1").axis().set("xmax", 0.45775407552719116);
           model.component("comp1").view("view1").axis().set("ymin", -0.04647742956876755);
@@ -207,6 +203,7 @@ public class SimulationRunner {
           model.study("std1").feature("stat").set("plistarr", new String[]{"range(0.01,0.01,kk)*p_max"});
           model.study("std1").feature("stat").set("punit", new String[]{"Pa"});
 
+          // 创建求解器
           model.sol().create("sol1");
           model.sol("sol1").study("std1");
           model.sol("sol1").attach("std1");
@@ -236,7 +233,6 @@ public class SimulationRunner {
           model.sol("sol1").feature("s1").feature().remove("fcDef");
           model.sol("sol1").feature("s1").feature("fc1").label("\u5168\u8026\u5408 1.1");
           model.sol("sol1").feature("s1").feature("fc1").set("dtech", "ddog");
-          
           model.sol("sol1").runAll();
 
           // // 创建2D绘图
@@ -254,7 +250,7 @@ public class SimulationRunner {
           // model.result("pg1").feature("surf1").create("def", "Deform");
           // model.result("pg1").feature("surf1").feature("def").set("scaleactive", true);
           
-          // 2D points
+          // 创建二维截点
           for (int i = 1; i <= 2 * crackNum; i++) {
                int crackIndex = (i - 1) / 2;
                double centerX = positionList.get(crackIndex)[0];
@@ -276,11 +272,30 @@ public class SimulationRunner {
                model.result().dataset("cpt" + i).set("pointvar", "cpt" + i + "n");
           }
 
-          // globle compute
+          // 要导出的数据一共有三个条目，裂隙面积（porocity）、二维截点坐标（distance）和二维截点y应力（syy），一共81个表格
+          // 创建全局计算1表格
+          model.result().table().create("tbl" + 1, "Table");
+          model.result().table("tbl" + 1).comments("全局计算 " + 1);
+          // 创建二维截点坐标表格
+          for(int i = 1; i <= 2 * crackNum; i++) {
+               int index = i + 1;
+               model.result().table().create("tbl" + index, "Table");
+               model.result().table("tbl" + index).comments("点计算 " + i);
+          }
+          // 创建应力计算表格
+          for(int i = 1; i <= 2 * crackNum; i++) {
+          int index = i + 2 * crackNum;
+          model.result().table().create("tbl" + index, "Table");
+          model.result().table("tbl" + index).comments("应力计算 " + i);
+          }
+
+          // 创建全局计算
           model.result().numerical().create("gev1", "EvalGlobal");
           model.result().numerical().create("av1", "AvLine");
           model.result().numerical("av1").selection().set(3);
           model.result().numerical().create("gev2", "EvalGlobal");
+          model.result().numerical("gev1").set("data", "dset1");
+          model.result().numerical("gev1").set("table", "tbl1");
           model.result().numerical("gev1")
                .set("expr", new String[]{"area1", "area2", "area3", "area4", "area5", "area6", "area7", "area8", "area9", "area10", "area11", "area12", "area13", "area14", "area15", "area16", "area17", "area18", "area19", "area20"});
           model.result().numerical("gev1")
@@ -302,14 +317,8 @@ public class SimulationRunner {
                .set("descr", new String[]{"", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", ""});
           model.result().numerical("gev2")
                .set("const", new String[][]{{"solid.refpntx", "0", "\u529b\u77e9\u8ba1\u7b97\u53c2\u8003\u70b9\uff0cx \u5750\u6807"}, {"solid.refpnty", "0", "\u529b\u77e9\u8ba1\u7b97\u53c2\u8003\u70b9\uff0cy \u5750\u6807"}, {"solid.refpntz", "0", "\u529b\u77e9\u8ba1\u7b97\u53c2\u8003\u70b9\uff0cz \u5750\u6807"}});
-          
-          // table and comments
-          for(int i = 1; i <= 2 * crackNum; i++) {
-               model.result().table().create("tbl" + i, "Table");
-               model.result().table("tbl" + i).comments("\u70b9\\u8ba1\\u7b97 " + i);
-               }
-
-          // point compute
+                   
+          // 创建80个计算
           for(int i = 1; i <= 2 * crackNum; i++) {
                model.result().numerical().create("pev" + i, "EvalPoint");
                model.result().numerical("pev" + i).set("data", "cpt" + i);
@@ -321,26 +330,43 @@ public class SimulationRunner {
                     .set("const", new String[][]{{"solid.refpntx", "0", "\u529b\u77e9\u8ba1\u7b97\u53c2\u8003\u70b9\uff0cx \u5750\u6807"}, {"solid.refpnty", "0", "\u529b\u77e9\u8ba1\u7b97\u53c2\u8003\u70b9\uff0cy \u5750\u6807"}, {"solid.refpntz", "0", "\u529b\u77e9\u8ba1\u7b97\u53c2\u8003\u70b9\uff0cz \u5750\u6807"}});
                model.result().numerical("pev" + i).setResult();
           }
+          for(int i = 1; i <= 2 * crackNum; i++) {
+          int index = i + 2 * crackNum;
+          model.result().numerical().create("pev" + index, "EvalPoint");
+          model.result().numerical("pev" + index).set("data", "cpt" + i);
+          model.result().numerical("pev" + index).set("table", "tbl" + index);
+          model.result().numerical("pev" + index).set("expr", new String[]{"solid.syy"});
+          model.result().numerical("pev" + index).set("unit", new String[]{"Pa"});
+          model.result().numerical("pev" + index).set("descr", new String[]{"y方向应力"});
+          model.result().numerical("pev" + index).set("const", new String[][]{{"solid.refpntx","0","力矩计算参考点，x 坐标"},{"solid.refpnty","0","力矩计算参考点，y 坐标"},{"solid.refpntz","0","力矩计算参考点，z 坐标"}});
+          model.result().numerical("pev" + index).setResult();
+          }
 
-          // create ExportTable
+          // 创建表格导出，导出的条目有porocity、distance、stressy
+          // 合成ARname，例如：16AR1+4AR2
           String ARname = "";
           int count = 0;
-          for (Crack.CrackData data : crack.getCrackDataList()) {
+          for (CrackData crack : crackManager.getModelConfig().getCrackList()) {
                count++;
-               ARname = ARname + data.getNum() + data.getName();
-               if(count < crack.getCrackDataList().size()){
+               ARname = ARname + crack.getNum() + crack.getName();
+               if(count < crackManager.getModelConfig().getCrackList().size()){
                     ARname = ARname + "+";
                }
           }
-          
-
-          String filePath1 = "E:/OneDrive/Project/Innovation/Data/Finally";
-          String filePath2 = filePath1 + String.format("/%d-cracks-distance-%d-%d-%s", crackNum, groupNum, n, ARname);
-          File file = new File(filePath2);
-          if(!file.exists()){
-               file.mkdirs();
+          // 创建保存目录
+          String exportDir = crackManager.getPathConfig().getExportDir();
+          String porocityDir = exportDir + String.format("/%d-cracks-porocity-%d-%d-%s", crackNum, groupNum, n, ARname);
+          String distanceDir = exportDir + String.format("/%d-cracks-distance-%d-%d-%s", crackNum, groupNum, n, ARname);
+          String stressyDir  = exportDir + String.format("/%d-cracks-stressy-%d-%d-%s", crackNum, groupNum, n, ARname);
+          String[] resultDirs = {porocityDir, distanceDir, stressyDir};
+          for(String dir : resultDirs) {
+               File file = new File(dir);
+               if(!file.exists()) {
+                    file.mkdirs();
+               }
           }
 
+          // 创建导出
           for(int i = 1; i <= 2 * crackNum; i++) {
                model.result().export().create("tbl" + i , "Table");
                model.result().export("tbl" + i).set("table", "tbl" + i);
