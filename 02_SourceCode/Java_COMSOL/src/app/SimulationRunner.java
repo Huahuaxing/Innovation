@@ -1,9 +1,6 @@
 package app;
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileReader;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
 import com.comsol.model.*;
@@ -22,12 +19,16 @@ public class SimulationRunner {
           int crackNum = crackManager.getModelConfig().getCrackNum();
           int groupNum = crackManager.getModelConfig().getGroupNum();
           String crackShape = crackManager.getModelConfig().getCrackShape();          // 裂隙类型，椭圆或多边形
-          List<CrackData> crackList = crackManager.getCrackList();
           List<double[]> arList = crackManager.getARList();
-          List<double[]> positionList;
-          List<double[][]> coordinateList;
+          List<double[]> positionList = null;
+          List<double[][]> coordinateList = null;
+          String exportDir = crackManager.getPathConfig().getExportDir();
 
+          // 创建数据保存目录
+          String modelDir = exportDir + String.format("sub_model_%d", n);
+          new File(modelDir).mkdirs();
 
+          // 创建COMSOL模型
           Model model = ModelUtil.create("Model");
           // model.modelPath("E:\\OneDrive\\Project\\Innovation");
           // 创建全局变量
@@ -74,9 +75,9 @@ public class SimulationRunner {
                     model.component("comp1").geom("geom1").feature("dif" + i).selection("input").set(inputFeature);
                     model.component("comp1").geom("geom1").feature("dif" + i).selection("input2").set("e" + i);
                }
-          }      
-          if ("polygon".equalsIgnoreCase(crackShape)) {
+          } else if ("polygon".equalsIgnoreCase(crackShape)) {
                if ("read".equalsIgnoreCase(crackManager.getModelConfig().getCrackSource())) {
+                    positionList = crackManager.readCrackPosition(n);
                     coordinateList = crackManager.readPolCoordinate(n);
                } else {
                     positionList = crackManager.crackPosition();
@@ -99,6 +100,8 @@ public class SimulationRunner {
                     model.component("comp1").geom("geom1").feature("dif" + i).selection("input").set(inputFeature);
                     model.component("comp1").geom("geom1").feature("dif" + i).selection("input2").set("pol" + i);
                }
+          } else {
+               throw new IllegalArgumentException("Unsupported crack shape: " + crackShape);
           }
           model.component("comp1").geom("geom1").run();
           
@@ -318,7 +321,7 @@ public class SimulationRunner {
           model.result().numerical("gev2")
                .set("const", new String[][]{{"solid.refpntx", "0", "\u529b\u77e9\u8ba1\u7b97\u53c2\u8003\u70b9\uff0cx \u5750\u6807"}, {"solid.refpnty", "0", "\u529b\u77e9\u8ba1\u7b97\u53c2\u8003\u70b9\uff0cy \u5750\u6807"}, {"solid.refpntz", "0", "\u529b\u77e9\u8ba1\u7b97\u53c2\u8003\u70b9\uff0cz \u5750\u6807"}});
                    
-          // 创建80个计算
+          // 创建80个点计算
           for(int i = 1; i <= 2 * crackNum; i++) {
                model.result().numerical().create("pev" + i, "EvalPoint");
                model.result().numerical("pev" + i).set("data", "cpt" + i);
@@ -354,10 +357,9 @@ public class SimulationRunner {
                }
           }
           // 创建保存目录
-          String exportDir = crackManager.getPathConfig().getExportDir();
-          String porocityDir = exportDir + String.format("/%d-cracks-porocity-%d-%d-%s", crackNum, groupNum, n, ARname);
-          String distanceDir = exportDir + String.format("/%d-cracks-distance-%d-%d-%s", crackNum, groupNum, n, ARname);
-          String stressyDir  = exportDir + String.format("/%d-cracks-stressy-%d-%d-%s", crackNum, groupNum, n, ARname);
+          String porocityDir = modelDir + String.format("/%d-cracks-porocity-%d-%d-%s", crackNum, groupNum, n, ARname);
+          String distanceDir = modelDir + String.format("/%d-cracks-distance-%d-%d-%s", crackNum, groupNum, n, ARname);
+          String stressyDir  = modelDir + String.format("/%d-cracks-stressy-%d-%d-%s", crackNum, groupNum, n, ARname);
           String[] resultDirs = {porocityDir, distanceDir, stressyDir};
           for(String dir : resultDirs) {
                File file = new File(dir);
@@ -367,30 +369,32 @@ public class SimulationRunner {
           }
 
           // 创建导出
+          // 导出porocity
+          model.result().export().create("tbl" + 1 , "Table");
+          model.result().export("tbl" + 1).set("table", "tbl" + 1);
+          model.result().export("tbl" + 1).set("filename", porocityDir + String.format("/%d-cracks-porocity-%d-%d-%s.txt", crackNum, groupNum, n, ARname));
+          model.result().export("tbl" + 1).run();
+          // 导出distance
           for(int i = 1; i <= 2 * crackNum; i++) {
-               model.result().export().create("tbl" + i , "Table");
-               model.result().export("tbl" + i).set("table", "tbl" + i);
-               model.result().export("tbl" + i)
-                         .set("filename", filePath2 + String.format("/%d-cracks-distance-%d~40-%d-%s.txt", crackNum, i, n, ARname)); // 20-cracks-1_5-0.0001_0.018/data_1-40.txt
-               model.result().export("tbl" + i).run();
+               int index = i + 1;
+               model.result().export().create("tbl" + index , "Table");
+               model.result().export("tbl" + index).set("table", "tbl" + index);
+               model.result().export("tbl" + index).set("filename", distanceDir + String.format("/%d-cracks-distance-%d~40-%d-%s.txt", crackNum, i, n, ARname));
+               model.result().export("tbl" + index).run();
+          }
+          // 导出stressy
+          for(int i = 1; i <= 2 * crackNum; i++) {
+               int index = i + 2 * crackNum;
+               model.result().export().create("tbl" + index , "Table");
+               model.result().export("tbl" + index).set("table", "tbl" + index);
+               model.result().export("tbl" + index).set("filename", stressyDir + String.format("/%d-cracks-stressy-%d~40-%d-%s.txt", crackNum, i, n, ARname));
+               model.result().export("tbl" + index).run();
           }
 
 
           // 保存模型
-          String newModeldir = "";
-          if (crackShape.equals("ellipse")) {
-               newModeldir = String.format("D:/Projects/Innovation/Data/source/ellipse_aligned_source/第%d组_%s", groupNum, ARname);
-          } else {
-               newModeldir = String.format("D:/Projects/Innovation/Data/source/polygonal_source/第%d组_%s", groupNum, ARname);
-          }
-          File newModelDir = new File(newModeldir);
-          if(!newModelDir.exists()){
-               newModelDir.mkdirs();
-          }
-
           try {
-               String newModelPath = String.format(newModeldir + "/%d-%d.mph", groupNum, n); // 新的文件路径
-               model.save(newModelPath);
+               model.save(modelDir + String.format("/model_%d-%d.mph", groupNum, n));
            } catch (IOException e) {
                e.printStackTrace(); // 打印异常信息，您可以根据需要进行其他处理
            }
@@ -399,8 +403,8 @@ public class SimulationRunner {
      }
 
      // 为下一轮生成清除结果
-     public static void run3(Model model){
-
+     public static void run2(CrackManager crackManager, Model model){
+          int crackNum = crackManager.getModelConfig().getCrackList().size();
           model.result().numerical().remove("gev1");
           model.result().numerical().remove("gev2");
           model.result().numerical().remove("av1");
@@ -414,13 +418,13 @@ public class SimulationRunner {
      }
 
      public static void main(String[] args) {
-          
-          for(int n = 1; n <= num_cycles; n++){
-
-               Model model = run(n);
-
-               if (n != num_cycles) {
-                    run3(model);
+          Config config = ConfigLoader.load("config.json");
+          CrackManager crackManager = new CrackManager(config);
+          int subModelNum = crackManager.getModelConfig().getSubModelNum();
+          for(int n = 1; n <= subModelNum; n++){
+               Model model = run(crackManager, n);
+               if (n != subModelNum) {
+                    run2(crackManager, model);
                }
           }
      }
